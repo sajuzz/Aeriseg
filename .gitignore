@@ -1,1 +1,8 @@
-# .gitignore content here
+.venv/
+*.pyc
+*.pyo
+__pycache__/
+*.log
+.env
+.idea/
+.vscode/

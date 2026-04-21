@@ -1,6 +1,17 @@
+ HEAD
 *.log
 .env
 *.db
 __pycache__/
 *.pem
 *.key
+
+.venv/
+*.pyc
+*.pyo
+__pycache__/
+*.log
+.env
+.idea/
+.vscode/
+ 708c0e442ee7b491d94cae035a285ac29df1e45a

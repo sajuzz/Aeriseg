@@ -1,0 +1,1 @@
+# 04_smoke_test.sh content here

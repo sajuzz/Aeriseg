@@ -1,0 +1,238 @@
+[0;32m[20:27:49] ============================================[0m
+[0;32m[20:27:49]  MediShield SOC — WSL Install[0m
+[0;32m[20:27:49]  Log: /opt/medishield/logs/install.log[0m
+[0;32m[20:27:49] ============================================[0m
+[0;32m[20:27:49] WSL detected — version: WSL2[0m
+[0;32m[20:27:49] OS: Ubuntu 24.04.3 LTS[0m
+[0;32m[20:27:49] RAM available to WSL: 3GB[0m
+
+[0;36m━━━ Step 1/7 — System packages ━━━[0m
+[0;32m[20:29:16] Python: Python 3.12.3 → python3[0m
+
+[0;36m━━━ Step 2/7 — PostgreSQL ━━━[0m
+[0;32m[20:29:16]   PostgreSQL version: 15[0m
+[0;32m[20:29:19]   PostgreSQL ready — localhost:5432[0m
+
+[0;36m━━━ Step 3/7 — ClickHouse ━━━[0m
+[0;32m[20:29:19]   Installing ClickHouse...[0m
+deb [arch=amd64 signed-by=/usr/share/keyrings/clickhouse-keyring.gpg] https://packages.clickhouse.com/deb stable main
+[0;32m[20:29:57]   ClickHouse installed[0m
+<clickhouse>
+    <users>
+        <medishield>
+            <password>ch_secure_pass_2024</password>
+            <networks><ip>::/0</ip></networks>
+            <profile>default</profile>
+            <quota>default</quota>
+        </medishield>
+    </users>
+</clickhouse>
+<clickhouse>
+    <max_server_memory_usage_to_ram_ratio>0.4</max_server_memory_usage_to_ram_ratio>
+    <max_concurrent_queries>10</max_concurrent_queries>
+    <max_connections>50</max_connections>
+    <logger>
+        <level>warning</level>
+        <console>0</console>
+        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
+        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+    </logger>
+</clickhouse>
+[0;32m[20:29:57]   ClickHouse configured[0m
+
+[0;36m━━━ Step 4/7 — NATS JetStream ━━━[0m
+[0;32m[20:29:57]   NATS already installed: nats-server: v2.10.18[0m
+[0;32m[20:29:57]   NATS configured[0m
+
+[0;36m━━━ Step 5/7 — ClickHouse schema ━━━[0m
+[0;32m[20:29:57]   Starting ClickHouse to apply schema...[0m
+[0;31m[20:30:23] FAIL: ClickHouse would not start for schema setup. Check: /var/log/clickhouse-server/clickhouse-server.err.log[0m
+[0;32m[20:33:25] ============================================[0m
+[0;32m[20:33:25]  MediShield SOC — WSL Install[0m
+[0;32m[20:33:25]  Log: /opt/medishield/logs/install.log[0m
+[0;32m[20:33:25] ============================================[0m
+[0;32m[20:33:25] WSL detected — version: WSL2[0m
+[0;32m[20:33:25] OS: Ubuntu 24.04.3 LTS[0m
+[0;32m[20:33:26] RAM available to WSL: 3GB[0m
+
+[0;36m━━━ Step 1/7 — System packages ━━━[0m
+[0;32m[20:33:35] Python: Python 3.12.3 → python3[0m
+
+[0;36m━━━ Step 2/7 — PostgreSQL ━━━[0m
+[0;32m[20:33:35]   PostgreSQL version: 15[0m
+[0;32m[20:33:38]   PostgreSQL ready — localhost:5432[0m
+
+[0;36m━━━ Step 3/7 — ClickHouse ━━━[0m
+[0;32m[20:33:38]   ClickHouse already installed — skipping[0m
+<clickhouse>
+    <users>
+        <medishield>
+            <password>ch_secure_pass_2024</password>
+            <networks><ip>::/0</ip></networks>
+            <profile>default</profile>
+            <quota>default</quota>
+        </medishield>
+    </users>
+</clickhouse>
+<clickhouse>
+    <max_server_memory_usage_to_ram_ratio>0.4</max_server_memory_usage_to_ram_ratio>
+    <max_concurrent_queries>10</max_concurrent_queries>
+    <max_connections>50</max_connections>
+    <logger>
+        <level>warning</level>
+        <console>0</console>
+        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
+        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+    </logger>
+</clickhouse>
+[0;32m[20:33:38]   ClickHouse configured[0m
+
+[0;36m━━━ Step 4/7 — NATS JetStream ━━━[0m
+[0;32m[20:33:38]   NATS already installed: nats-server: v2.10.18[0m
+[0;32m[20:33:38]   NATS configured[0m
+
+[0;36m━━━ Step 5/7 — ClickHouse schema ━━━[0m
+[0;32m[20:33:38]   Starting ClickHouse to apply schema...[0m
+[0;31m[20:34:08] FAIL: ClickHouse would not start for schema setup. Check: /var/log/clickhouse-server/clickhouse-server.err.log[0m
+[0;32m[09:29:06] ============================================[0m
+[0;32m[09:29:06]  MediShield SOC — WSL Install[0m
+[0;32m[09:29:06]  Log: /opt/medishield/logs/install.log[0m
+[0;32m[09:29:06] ============================================[0m
+[0;32m[09:29:06] WSL detected — version: WSL2[0m
+[0;32m[09:29:06] OS: Ubuntu 24.04.3 LTS[0m
+[0;32m[09:29:06] RAM available to WSL: 3GB[0m
+
+[0;36m━━━ Step 1/7 — System packages ━━━[0m
+[0;32m[09:29:22] Python: Python 3.12.3 → python3[0m
+
+[0;36m━━━ Step 2/7 — PostgreSQL ━━━[0m
+[0;32m[09:29:22]   PostgreSQL version: 15[0m
+[0;32m[09:29:25]   PostgreSQL ready — localhost:5432[0m
+
+[0;36m━━━ Step 3/7 — ClickHouse ━━━[0m
+[0;32m[09:29:25]   ClickHouse already installed — skipping[0m
+<clickhouse>
+    <users>
+        <medishield>
+            <password>ch_secure_pass_2024</password>
+            <networks><ip>::/0</ip></networks>
+            <profile>default</profile>
+            <quota>default</quota>
+        </medishield>
+    </users>
+</clickhouse>
+<clickhouse>
+    <max_server_memory_usage_to_ram_ratio>0.4</max_server_memory_usage_to_ram_ratio>
+    <max_concurrent_queries>10</max_concurrent_queries>
+    <max_connections>50</max_connections>
+    <logger>
+        <level>warning</level>
+        <console>0</console>
+        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
+        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+    </logger>
+</clickhouse>
+[0;32m[09:29:25]   ClickHouse configured[0m
+
+[0;36m━━━ Step 4/7 — NATS JetStream ━━━[0m
+[0;32m[09:29:25]   NATS already installed: nats-server: v2.10.18[0m
+[0;32m[09:29:25]   NATS configured[0m
+
+[0;36m━━━ Step 5/7 — ClickHouse schema ━━━[0m
+[0;32m[09:29:25]   Starting ClickHouse to apply schema...[0m
+[0;32m[09:50:07] ============================================[0m
+[0;32m[09:50:07]  MediShield SOC — WSL Install[0m
+[0;32m[09:50:07]  Log: /opt/medishield/logs/install.log[0m
+[0;32m[09:50:07] ============================================[0m
+[0;32m[09:50:07] WSL detected — version: WSL2[0m
+[0;32m[09:50:07] OS: Ubuntu 24.04.3 LTS[0m
+[0;32m[09:50:07] RAM available to WSL: 3GB[0m
+
+[0;36m━━━ Step 1/7 — System packages ━━━[0m
+[0;32m[09:50:11] Python: Python 3.12.3 → python3[0m
+
+[0;36m━━━ Step 2/7 — PostgreSQL ━━━[0m
+[0;32m[09:50:11]   PostgreSQL version: 15[0m
+[0;32m[09:50:13]   PostgreSQL ready — localhost:5432[0m
+
+[0;36m━━━ Step 3/7 — ClickHouse ━━━[0m
+[0;32m[09:50:13]   ClickHouse already installed — skipping[0m
+<clickhouse>
+    <users>
+        <medishield>
+            <password>ch_secure_pass_2024</password>
+            <networks><ip>::/0</ip></networks>
+            <profile>default</profile>
+            <quota>default</quota>
+        </medishield>
+    </users>
+</clickhouse>
+<clickhouse>
+    <max_server_memory_usage_to_ram_ratio>0.4</max_server_memory_usage_to_ram_ratio>
+    <max_concurrent_queries>10</max_concurrent_queries>
+    <max_connections>50</max_connections>
+    <logger>
+        <level>warning</level>
+        <console>0</console>
+        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
+        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+    </logger>
+</clickhouse>
+[0;32m[09:50:13]   ClickHouse configured[0m
+
+[0;36m━━━ Step 4/7 — NATS JetStream ━━━[0m
+[0;32m[09:50:13]   NATS already installed: nats-server: v2.10.18[0m
+[0;32m[09:50:13]   NATS configured[0m
+
+[0;36m━━━ Step 5/7 — ClickHouse schema ━━━[0m
+[0;32m[09:50:13]   Starting ClickHouse to apply schema...[0m
+Code: 62. DB::Exception: Syntax error: failed at position 1 (REATE): REATE DATABASE IF NOT EXISTS medishield;. Expected one of: Query, Query with output, EXPLAIN, EXPLAIN, SELECT query, possibly with UNION, list of union elements, SELECT query, subquery, possibly with UNION, SELECT or EXPLAIN subquery, SELECT query, WITH, FROM, SELECT, SHOW CREATE QUOTA query, SHOW CREATE, SHOW [FULL] [TEMPORARY] TABLES|DATABASES|CLUSTERS|CLUSTER|MERGES 'name' [[NOT] [I]LIKE 'str'] [LIMIT expr], SHOW, SHOW COLUMNS query, SHOW ENGINES query, SHOW ENGINES, SHOW FUNCTIONS query, SHOW FUNCTIONS, SHOW INDEXES query, SHOW SETTING query, SHOW SETTING, EXISTS or SHOW CREATE query, EXISTS, DESCRIBE FILESYSTEM CACHE query, DESCRIBE, DESC, DESCRIBE query, SHOW PROCESSLIST query, SHOW PROCESSLIST, CREATE TABLE or ATTACH TABLE query, CREATE, ATTACH, REPLACE, CREATE DATABASE query, CREATE VIEW query, CREATE DICTIONARY, CREATE WINDOW VIEW query, ALTER query, ALTER TABLE, ALTER TEMPORARY TABLE, ALTER DATABASE, RENAME query, RENAME DATABASE, RENAME TABLE, EXCHANGE TABLES, RENAME DICTIONARY, EXCHANGE DICTIONARIES, RENAME, DROP query, DROP, DETACH, TRUNCATE, UNDROP query, UNDROP, CHECK ALL TABLES, CHECK TABLE, KILL QUERY query, KILL, OPTIMIZE query, OPTIMIZE TABLE, WATCH query, WATCH, SHOW ACCESS query, SHOW ACCESS, ShowAccessEntitiesQuery, SHOW GRANTS query, SHOW GRANTS, SHOW PRIVILEGES query, SHOW PRIVILEGES, BACKUP or RESTORE query, BACKUP, RESTORE, SNAPSHOT, SNAPSHOT, INSERT query, INSERT INTO, USE query, USE, SET ROLE or SET DEFAULT ROLE query, SET ROLE DEFAULT, SET ROLE, SET DEFAULT ROLE, SET query, SET, SYSTEM query, SYSTEM, CREATE USER or ALTER USER query, ALTER USER, CREATE USER, CREATE ROLE or ALTER ROLE query, ALTER ROLE, CREATE ROLE, CREATE QUOTA or ALTER QUOTA query, ALTER QUOTA, CREATE QUOTA, CREATE ROW POLICY or ALTER ROW POLICY query, ALTER POLICY, ALTER ROW POLICY, CREATE POLICY, CREATE ROW POLICY, CREATE MASKING POLICY or ALTER MASKING POLICY query, ATTACH MASKING POLICY, ALTER MASKING POLICY, CREATE MASKING POLICY, CREATE SETTINGS PROFILE or ALTER SETTINGS PROFILE query, ALTER SETTINGS PROFILE, ALTER PROFILE, CREATE SETTINGS PROFILE, CREATE PROFILE, CREATE FUNCTION query, DROP FUNCTION query, CREATE WORKLOAD query, DROP WORKLOAD query, CREATE RESOURCE query, DROP RESOURCE query, CREATE NAMED COLLECTION, DROP NAMED COLLECTION query, Alter NAMED COLLECTION query, ALTER, CREATE INDEX query, DROP INDEX query, DROP access entity query, MOVE access entity query, MOVE, GRANT or REVOKE query, REVOKE, GRANT, CHECK GRANT, CHECK GRANT, TCL query, BEGIN TRANSACTION, START TRANSACTION, COMMIT, ROLLBACK, SET TRANSACTION SNAPSHOT, Delete query, DELETE, Update query, UPDATE, COPY query, COPY, EXECUTE AS query, EXECUTE AS. (SYNTAX_ERROR)
+
+[0;32m[09:56:39] ============================================[0m
+[0;32m[09:56:39]  MediShield SOC — WSL Install[0m
+[0;32m[09:56:39]  Log: /opt/medishield/logs/install.log[0m
+[0;32m[09:56:39] ============================================[0m
+[0;32m[09:56:39] WSL detected — version: WSL2[0m
+[0;32m[09:56:39] OS: Ubuntu 24.04.3 LTS[0m
+[0;32m[09:56:39] RAM available to WSL: 3GB[0m
+
+[0;36m━━━ Step 1/7 — System packages ━━━[0m
+[0;32m[09:56:43] Python: Python 3.12.3 → python3[0m
+
+[0;36m━━━ Step 2/7 — PostgreSQL ━━━[0m
+[0;32m[09:56:43]   PostgreSQL version: 15[0m
+[0;32m[09:56:46]   PostgreSQL ready — localhost:5432[0m
+
+[0;36m━━━ Step 3/7 — ClickHouse ━━━[0m
+[0;32m[09:56:46]   ClickHouse already installed — skipping[0m
+<clickhouse>
+    <users>
+        <medishield>
+            <password>ch_secure_pass_2024</password>
+            <networks><ip>::/0</ip></networks>
+            <profile>default</profile>
+            <quota>default</quota>
+        </medishield>
+    </users>
+</clickhouse>
+<clickhouse>
+    <max_server_memory_usage_to_ram_ratio>0.4</max_server_memory_usage_to_ram_ratio>
+    <max_concurrent_queries>10</max_concurrent_queries>
+    <max_connections>50</max_connections>
+    <logger>
+        <level>warning</level>
+        <console>0</console>
+        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
+        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+    </logger>
+</clickhouse>
+[0;32m[09:56:46]   ClickHouse configured[0m
+
+[0;36m━━━ Step 4/7 — NATS JetStream ━━━[0m
+[0;32m[09:56:46]   NATS already installed: nats-server: v2.10.18[0m
+[0;32m[09:56:46]   NATS configured[0m
+
+[0;36m━━━ Step 5/7 — ClickHouse schema ━━━[0m
+[0;32m[09:56:46]   Starting ClickHouse to apply schema...[0m
+Code: 62. DB::Exception: Syntax error: failed at position 1 (REATE): REATE DATABASE IF NOT EXISTS medishield;. Expected one of: Query, Query with output, EXPLAIN, EXPLAIN, SELECT query, possibly with UNION, list of union elements, SELECT query, subquery, possibly with UNION, SELECT or EXPLAIN subquery, SELECT query, WITH, FROM, SELECT, SHOW CREATE QUOTA query, SHOW CREATE, SHOW [FULL] [TEMPORARY] TABLES|DATABASES|CLUSTERS|CLUSTER|MERGES 'name' [[NOT] [I]LIKE 'str'] [LIMIT expr], SHOW, SHOW COLUMNS query, SHOW ENGINES query, SHOW ENGINES, SHOW FUNCTIONS query, SHOW FUNCTIONS, SHOW INDEXES query, SHOW SETTING query, SHOW SETTING, EXISTS or SHOW CREATE query, EXISTS, DESCRIBE FILESYSTEM CACHE query, DESCRIBE, DESC, DESCRIBE query, SHOW PROCESSLIST query, SHOW PROCESSLIST, CREATE TABLE or ATTACH TABLE query, CREATE, ATTACH, REPLACE, CREATE DATABASE query, CREATE VIEW query, CREATE DICTIONARY, CREATE WINDOW VIEW query, ALTER query, ALTER TABLE, ALTER TEMPORARY TABLE, ALTER DATABASE, RENAME query, RENAME DATABASE, RENAME TABLE, EXCHANGE TABLES, RENAME DICTIONARY, EXCHANGE DICTIONARIES, RENAME, DROP query, DROP, DETACH, TRUNCATE, UNDROP query, UNDROP, CHECK ALL TABLES, CHECK TABLE, KILL QUERY query, KILL, OPTIMIZE query, OPTIMIZE TABLE, WATCH query, WATCH, SHOW ACCESS query, SHOW ACCESS, ShowAccessEntitiesQuery, SHOW GRANTS query, SHOW GRANTS, SHOW PRIVILEGES query, SHOW PRIVILEGES, BACKUP or RESTORE query, BACKUP, RESTORE, SNAPSHOT, SNAPSHOT, INSERT query, INSERT INTO, USE query, USE, SET ROLE or SET DEFAULT ROLE query, SET ROLE DEFAULT, SET ROLE, SET DEFAULT ROLE, SET query, SET, SYSTEM query, SYSTEM, CREATE USER or ALTER USER query, ALTER USER, CREATE USER, CREATE ROLE or ALTER ROLE query, ALTER ROLE, CREATE ROLE, CREATE QUOTA or ALTER QUOTA query, ALTER QUOTA, CREATE QUOTA, CREATE ROW POLICY or ALTER ROW POLICY query, ALTER POLICY, ALTER ROW POLICY, CREATE POLICY, CREATE ROW POLICY, CREATE MASKING POLICY or ALTER MASKING POLICY query, ATTACH MASKING POLICY, ALTER MASKING POLICY, CREATE MASKING POLICY, CREATE SETTINGS PROFILE or ALTER SETTINGS PROFILE query, ALTER SETTINGS PROFILE, ALTER PROFILE, CREATE SETTINGS PROFILE, CREATE PROFILE, CREATE FUNCTION query, DROP FUNCTION query, CREATE WORKLOAD query, DROP WORKLOAD query, CREATE RESOURCE query, DROP RESOURCE query, CREATE NAMED COLLECTION, DROP NAMED COLLECTION query, Alter NAMED COLLECTION query, ALTER, CREATE INDEX query, DROP INDEX query, DROP access entity query, MOVE access entity query, MOVE, GRANT or REVOKE query, REVOKE, GRANT, CHECK GRANT, CHECK GRANT, TCL query, BEGIN TRANSACTION, START TRANSACTION, COMMIT, ROLLBACK, SET TRANSACTION SNAPSHOT, Delete query, DELETE, Update query, UPDATE, COPY query, COPY, EXECUTE AS query, EXECUTE AS. (SYNTAX_ERROR)
+

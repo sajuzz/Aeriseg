@@ -1,0 +1,6 @@
+*.log
+.env
+*.db
+__pycache__/
+*.pem
+*.key

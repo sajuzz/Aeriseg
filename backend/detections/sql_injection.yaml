@@ -1,0 +1,16 @@
+id: WEB-SQLI-ATTEMPT-001
+title: Potential SQL Injection Attempt
+description: Detects common SQL injection patterns in web logs
+severity: CRITICAL
+category: web_attack
+enabled: true
+time_window_seconds: 300
+threshold: 1
+
+asql_query: |
+  source:web AND description:UNION OR description:SELECT OR description:1=1 OR description:--
+
+mitre:
+  tactic: "Initial Access"
+  technique: "T1190"
+  technique_id: "T1190"

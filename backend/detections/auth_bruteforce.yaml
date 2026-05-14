@@ -1,0 +1,16 @@
+id: AUTH-BRUTEFORCE-001
+title: Multiple Failed Logins (Brute Force)
+description: Detects repeated authentication failures from a single source
+severity: HIGH
+category: authentication
+enabled: true
+time_window_seconds: 300
+threshold: 3
+
+asql_query: |
+  event_type:login_failed OR description:"failed login" OR description:"authentication failure"
+
+mitre:
+  tactic: "Credential Access"
+  technique: "Brute Force"
+  technique_id: "T1110"

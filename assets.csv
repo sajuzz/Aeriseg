@@ -1,0 +1,8 @@
+hostname,ip_address,asset_type,owner,department,criticality,vendor,model,location,tags
+MRI-01,10.10.5.22,MRI Scanner,Radiology,Imaging,CRITICAL,Siemens,Magnetom,Floor 2,medical_device
+ICU-MON-12,10.10.7.15,Patient Monitor,ICU Team,ICU,HIGH,Philips,IntelliVue,Floor 3,medical_device
+DC-AD-01,10.0.0.5,Domain Controller,IT,Infrastructure,CRITICAL,Microsoft,Windows Server 2022,Data Center,infrastructure
+NURSE-ST-04,10.10.8.44,Workstation,Nursing,Ward 4,MEDIUM,Dell,OptiPlex,Floor 4,endpoint
+XR-02,10.10.5.30,X-Ray Machine,Radiology,Imaging,HIGH,GE Healthcare,Definium,Floor 2,medical_device
+FIREWALL-MAIN,10.0.0.1,Firewall,Network Team,Infrastructure,CRITICAL,Palo Alto,PA-3200,Data Center,infrastructure
+HVAC-CTRL-1,10.20.1.5,HVAC Controller,Facilities,Building Mgmt,LOW,Honeywell,Webs-AX,Basement,iot,ot

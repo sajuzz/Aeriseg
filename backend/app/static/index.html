@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediShield SOC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --surface-color: #1a1f35;
+            --surface-hover: #262c45;
+            --accent-blue: #3b82f6;
+            --accent-teal: #14b8a6;
+            --critical-red: #ef4444;
+            --high-orange: #f97316;
+            --medium-yellow: #eab308;
+            --low-green: #22c55e;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --glass-bg: rgba(26, 31, 53, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Topbar */
+        header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-shield {
+            width: 24px;
+            height: 24px;
+            fill: url(#gradient);
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-tab {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-tab:hover {
+            color: var(--text-primary);
+            background: var(--surface-hover);
+        }
+
+        .nav-tab.active {
+            color: var(--text-primary);
+            background: var(--surface-color);
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Layout */
+        .container {
+            display: flex;
+            flex: 1;
+            padding: 2rem;
+            gap: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .view {
+            display: none;
+            width: 100%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .view.active {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Stats Row */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-card {
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-blue);
+            transition: transform 0.2s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-card.critical { border-left-color: var(--critical-red); }
+        .stat-card.high { border-left-color: var(--high-orange); }
+
+        .stat-title {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            border-bottom: 1px solid var(--glass-border);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        tr:hover td {
+            background: var(--surface-hover);
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge.critical { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.5); }
+        .badge.high { background: rgba(249, 115, 22, 0.2); color: #fdba74; border: 1px solid rgba(249, 115, 22, 0.5); }
+        .badge.medium { background: rgba(234, 179, 8, 0.2); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.5); }
+        .badge.low { background: rgba(34, 197, 94, 0.2); color: #86efac; border: 1px solid rgba(34, 197, 94, 0.5); }
+
+        .time {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Two column layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <svg style="width:0;height:0;position:absolute;" aria-hidden="true" focusable="false">
+      <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="var(--accent-blue)" />
+        <stop offset="100%" stop-color="var(--accent-teal)" />
+      </linearGradient>
+    </svg>
+
+    <header>
+        <div class="logo">
+            <svg class="logo-shield" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            MediShield SOC
+        </div>
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchView('alerts')">Alerts</button>
+            <button class="nav-tab" onclick="switchView('incidents')">Incident Queue</button>
+            <button class="nav-tab" onclick="switchView('report')">Reporting</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- ALERTS VIEW -->
+        <div id="alerts-view" class="view active">
+            <div class="stats-grid" id="report-summary">
+                <div class="stat-card">
+                    <div class="stat-title">Total Alerts</div>
+                    <div class="stat-value" id="stat-alerts">-</div>
+                </div>
+                <div class="stat-card critical">
+                    <div class="stat-title">Critical Alerts</div>
+                    <div class="stat-value" id="stat-critical">-</div>
+                </div>
+                <div class="stat-card high">
+                    <div class="stat-title">High Alerts</div>
+                    <div class="stat-value" id="stat-high">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Avg SLA Res</div>
+                    <div class="stat-value" id="stat-sla">-</div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">Live Alert Feed</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Severity</th>
+                                <th>Message</th>
+                                <th>Source IP</th>
+                                <th>Tactic</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="alerts-tbody">
+                            <tr><td colspan="5" style="text-align: center;">Loading alerts...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">Recent Cases</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tier</th>
+                                <th>Title</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cases-tbody">
+                            <tr><td colspan="3" style="text-align: center;">Loading cases...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- INCIDENTS VIEW -->
+        <div id="incidents-view" class="view">
+            <div class="card">
+                <div class="card-header">Active Incidents</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Incident ID</th>
+                            <th>Severity</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Owner</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="incidents-tbody">
+                        <tr><td colspan="6" style="text-align: center;">Loading incidents...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- REPORT VIEW -->
+        <div id="report-view" class="view">
+            <div class="card">
+                <div class="card-header">Severity Breakdown</div>
+                <div style="padding: 1rem 0; display: flex; gap: 2rem;" id="severity-breakdown">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">System Metrics</div>
+                <p style="color: var(--text-secondary);">Offline mock mode metrics showing simulated ingestion and analytics.</p>
+                <div style="margin-top: 1rem; background: var(--surface-color); padding: 1rem; border-radius: 8px;">
+                    <code>Status: OK | Storage: Local Mock | Mode: Air-gapped</code>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab Switching
+        function switchView(viewName) {
+            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(viewName + '-view').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Fetch Data
+        async function fetchData() {
+            try {
+                const [alertsRes, casesRes, incidentsRes, reportRes] = await Promise.all([
+                    fetch('/api/alerts'),
+                    fetch('/api/cases'),
+                    fetch('/api/incidents'),
+                    fetch('/api/report')
+                ]);
+
+                const alerts = await alertsRes.json();
+                const cases = await casesRes.json();
+                const incidents = await incidentsRes.json();
+                const report = await reportRes.json();
+
+                renderAlerts(alerts);
+                renderCases(cases);
+                renderIncidents(incidents);
+                renderReport(report);
+
+            } catch (err) {
+                console.error("Failed to fetch data", err);
+            }
+        }
+
+        function formatTime(isoStr) {
+            const date = new Date(isoStr);
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+
+        function renderAlerts(alerts) {
+            const tbody = document.getElementById('alerts-tbody');
+            tbody.innerHTML = alerts.map(a => `
+                <tr>
+                    <td><span class="badge ${a.severity.toLowerCase()}">${a.severity}</span></td>
+                    <td style="font-weight: 600;">${a.message}</td>
+                    <td><code>${a.source_ip}</code></td>
+                    <td>${a.tactic}</td>
+                    <td class="time">${formatTime(a.created_at)}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderCases(cases) {
+            const tbody = document.getElementById('cases-tbody');
+            tbody.innerHTML = cases.map(c => `
+                <tr>
+                    <td><span class="badge ${c.tier === 'L3' ? 'critical' : c.tier === 'L2' ? 'high' : 'medium'}">${c.tier}</span></td>
+                    <td style="font-weight: 600;">${c.title}</td>
+                    <td><span class="badge" style="background: var(--surface-color); border: 1px solid var(--glass-border);">${c.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderIncidents(incidents) {
+            const tbody = document.getElementById('incidents-tbody');
+            tbody.innerHTML = incidents.map(i => `
+                <tr>
+                    <td><code style="color: var(--accent-blue)">${i.incident_id}</code></td>
+                    <td><span class="badge ${i.severity.toLowerCase()}">${i.severity}</span></td>
+                    <td style="font-weight: 600;">${i.title}</td>
+                    <td><span class="badge" style="background: var(--surface-color); border: 1px solid var(--glass-border);">${i.status}</span></td>
+                    <td>${i.owner_team}</td>
+                    <td class="time">${formatTime(i.created_at)}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderReport(report) {
+            document.getElementById('stat-alerts').innerText = report.summary.total_alerts;
+            document.getElementById('stat-critical').innerText = report.severity_breakdown.CRITICAL || 0;
+            document.getElementById('stat-high').innerText = report.severity_breakdown.HIGH || 0;
+            document.getElementById('stat-sla').innerText = report.sla.avg_resolution_human || "N/A";
+
+            const sevBreakdown = document.getElementById('severity-breakdown');
+            sevBreakdown.innerHTML = Object.entries(report.severity_breakdown).map(([sev, count]) => `
+                <div style="flex: 1; background: var(--surface-color); padding: 1.5rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">${count}</div>
+                    <div style="font-size: 0.875rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 600;">${sev}</div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize
+        fetchData();
+        setInterval(fetchData, 5000); // Poll every 5s
+
+    </script>
+</body>
+</html>

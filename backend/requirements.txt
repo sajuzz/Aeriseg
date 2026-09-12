@@ -10,5 +10,8 @@ python-multipart
 structlog
 apscheduler
 nats-py
-clickhouse-driver
+elasticsearch[async]
+pytest
+pytest-asyncio
+httpx
 aiofiles

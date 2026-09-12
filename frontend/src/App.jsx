@@ -21,8 +21,7 @@ import Documentation from './pages/Documentation'
 import Login from './pages/Login'
 import DataSources from './pages/DataSources'
 import AttackTimeline from './pages/AttackTimeline'
-
-
+import PlaybookDesigner from './pages/PlaybookDesigner'
 
 import SidebarLayout from './layouts/SidebarLayout'
 import { useAuthStore } from './stores/useAuthStore'
@@ -94,11 +93,10 @@ function App() {
           <Route path="/data-sources" element={<DataSources />} />
           <Route path="/simulator" element={<AttackSimulator />} />
           <Route path="/investigations" element={<InvestigationQueue />} />
+          <Route path="/investigations/:id" element={<InvestigationDetail />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/timeline" element={<AttackTimeline />} />
-
-
-          <Route path="/investigations/:id" element={<InvestigationDetail />} />
+          <Route path="/playbooks/designer" element={<PlaybookDesigner />} />
         </Route>
       </Routes>
     </Router>

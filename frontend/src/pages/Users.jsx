@@ -27,7 +27,7 @@ function StatusPill({ status }) {
     offline:  'bg-red-50    text-red-700    border-red-200',
   };
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest border ${cfg[status] || 'bg-slate-50 text-slate-500 border-slate-200'}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest border ${cfg[status] || 'bg-siem-bg text-siem-muted border-siem-border'}`}>
       {status}
     </span>
   );
@@ -78,17 +78,17 @@ function ApplicationHealth() {
   const overallOk = health?.status === 'healthy';
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+    <div className="bg-siem-panel border border-siem-border rounded-2xl shadow-sm overflow-hidden">
 
       {/* Section header */}
-      <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/60">
+      <div className="flex items-center justify-between p-5 border-b border-siem-border bg-siem-bg/60">
         <div className="flex items-center gap-3">
           <div className={`p-2 rounded-xl border ${overallOk ? 'bg-emerald-50 border-emerald-200' : 'bg-amber-50 border-amber-200'}`}>
             <Server className={`w-5 h-5 ${overallOk ? 'text-emerald-600' : 'text-amber-600'}`} />
           </div>
           <div>
-            <h2 className="text-sm font-black text-slate-900 uppercase tracking-tight">Application Health</h2>
-            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">
+            <h2 className="text-sm font-black text-siem-text uppercase tracking-tight">Application Health</h2>
+            <p className="text-[10px] text-siem-muted font-bold uppercase tracking-widest mt-0.5">
               Live component diagnostics · auto-refreshes every 30s
             </p>
           </div>
@@ -100,17 +100,17 @@ function ApplicationHealth() {
           <button
             onClick={fetchHealth}
             title="Refresh health"
-            className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors"
+            className="p-1.5 rounded-lg border border-siem-border hover:bg-slate-100 transition-colors"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${spinning ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 text-siem-muted ${spinning ? 'animate-spin' : ''}`} />
           </button>
           <button
             onClick={() => setCollapsed(v => !v)}
-            className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors"
+            className="p-1.5 rounded-lg border border-siem-border hover:bg-slate-100 transition-colors"
           >
             {collapsed
-              ? <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
-              : <ChevronUp   className="w-3.5 h-3.5 text-slate-500" />
+              ? <ChevronDown className="w-3.5 h-3.5 text-siem-muted" />
+              : <ChevronUp   className="w-3.5 h-3.5 text-siem-muted" />
             }
           </button>
         </div>
@@ -119,7 +119,7 @@ function ApplicationHealth() {
       {!collapsed && (
         <div className="p-5">
           {loading && !health ? (
-            <div className="text-center py-8 text-xs font-bold text-slate-400 uppercase tracking-widest animate-pulse">
+            <div className="text-center py-8 text-xs font-bold text-siem-muted uppercase tracking-widest animate-pulse">
               Running diagnostics…
             </div>
           ) : !health ? (
@@ -135,10 +135,10 @@ function ApplicationHealth() {
                 {Object.entries(health.components || {}).map(([key, comp]) => (
                   <div
                     key={key}
-                    className="flex items-start gap-3 p-4 rounded-xl border border-slate-100 bg-slate-50/40 hover:bg-slate-50 transition-colors"
+                    className="flex items-start gap-3 p-4 rounded-xl border border-siem-border bg-siem-bg/40 hover:bg-siem-bg transition-colors"
                   >
-                    <div className="p-2 bg-white rounded-lg border border-slate-100 shadow-sm flex-shrink-0">
-                      {COMPONENT_ICONS[key] || <Server className="w-4 h-4 text-slate-400" />}
+                    <div className="p-2 bg-siem-panel rounded-lg border border-siem-border shadow-sm flex-shrink-0">
+                      {COMPONENT_ICONS[key] || <Server className="w-4 h-4 text-siem-muted" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2 mb-1">
@@ -147,11 +147,11 @@ function ApplicationHealth() {
                         </span>
                         <StatusPill status={comp.status} />
                       </div>
-                      <div className="text-[10px] text-slate-500 font-medium space-y-0.5">
-                        {comp.size_mb     !== undefined && <div>Database size: <span className="font-bold text-slate-700">{comp.size_mb} MB</span></div>}
-                        {comp.rules_loaded !== undefined && <div>Rules loaded: <span className="font-bold text-slate-700">{comp.rules_loaded}</span></div>}
-                        {comp.events_last_hour !== undefined && <div>Events last hour: <span className="font-bold text-slate-700">{comp.events_last_hour.toLocaleString()}</span></div>}
-                        {comp.users_registered !== undefined && <div>Users registered: <span className="font-bold text-slate-700">{comp.users_registered}</span></div>}
+                      <div className="text-[10px] text-siem-muted font-medium space-y-0.5">
+                        {comp.size_mb     !== undefined && <div>Database size: <span className="font-bold text-siem-text">{comp.size_mb} MB</span></div>}
+                        {comp.rules_loaded !== undefined && <div>Rules loaded: <span className="font-bold text-siem-text">{comp.rules_loaded}</span></div>}
+                        {comp.events_last_hour !== undefined && <div>Events last hour: <span className="font-bold text-siem-text">{comp.events_last_hour.toLocaleString()}</span></div>}
+                        {comp.users_registered !== undefined && <div>Users registered: <span className="font-bold text-siem-text">{comp.users_registered}</span></div>}
                         {comp.message     !== undefined && <div className="text-amber-600">{comp.message}</div>}
                       </div>
                     </div>
@@ -162,13 +162,13 @@ function ApplicationHealth() {
 
               {/* Stack info */}
               {health.stack && (
-                <div className="border-t border-slate-100 pt-4">
-                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-3">Platform Stack</div>
+                <div className="border-t border-siem-border pt-4">
+                  <div className="text-[10px] font-black text-siem-muted uppercase tracking-[0.15em] mb-3">Platform Stack</div>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                     {Object.entries(health.stack).map(([k, v]) => (
-                      <div key={k} className="px-3 py-2 bg-slate-50 border border-slate-100 rounded-lg">
-                        <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{k}</div>
-                        <div className="text-[10px] font-bold text-slate-700 mt-0.5 truncate" title={v}>{v}</div>
+                      <div key={k} className="px-3 py-2 bg-siem-bg border border-siem-border rounded-lg">
+                        <div className="text-[9px] font-black text-siem-muted uppercase tracking-widest">{k}</div>
+                        <div className="text-[10px] font-bold text-siem-text mt-0.5 truncate" title={v}>{v}</div>
                       </div>
                     ))}
                   </div>
@@ -238,8 +238,8 @@ export default function UserManagement() {
               <UsersIcon className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight">Identity Management</h1>
-              <p className="text-sm text-slate-500 font-medium mt-0.5">Manage AeriSeg personnel accounts and access roles</p>
+              <h1 className="text-2xl font-black text-siem-text tracking-tight">Identity Management</h1>
+              <p className="text-sm text-siem-muted font-medium mt-0.5">Manage AeriSeg personnel accounts and access roles</p>
             </div>
           </div>
           <button
@@ -251,10 +251,10 @@ export default function UserManagement() {
         </div>
 
         {/* User table */}
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <div className="bg-siem-panel border border-siem-border rounded-2xl shadow-sm overflow-hidden">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-[10px] uppercase tracking-widest text-slate-500 font-black">
+              <tr className="bg-siem-bg border-b border-siem-border text-[10px] uppercase tracking-widest text-siem-muted font-black">
                 <th className="p-4 pl-6">User</th>
                 <th className="p-4">Role</th>
                 <th className="p-4">Account ID</th>
@@ -265,26 +265,26 @@ export default function UserManagement() {
             <tbody className="divide-y divide-slate-50 text-sm">
               {loading ? (
                 <tr>
-                  <td colSpan="5" className="p-12 text-center text-slate-400 animate-pulse font-medium text-xs uppercase tracking-widest">
+                  <td colSpan="5" className="p-12 text-center text-siem-muted animate-pulse font-medium text-xs uppercase tracking-widest">
                     Synchronizing identities…
                   </td>
                 </tr>
               ) : users.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="p-12 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
+                  <td colSpan="5" className="p-12 text-center text-siem-muted text-xs font-bold uppercase tracking-widest">
                     No users found
                   </td>
                 </tr>
               ) : users.map(u => (
-                <tr key={u.id} className="hover:bg-slate-50/50 transition-colors group">
+                <tr key={u.id} className="hover:bg-siem-bg/50 transition-colors group">
                   <td className="p-4 pl-6">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-xs font-black text-blue-600 border border-blue-100">
                         {u.username.substring(0, 2).toUpperCase()}
                       </div>
                       <div>
-                        <div className="font-bold text-slate-900">{u.full_name}</div>
-                        <div className="text-[10px] text-slate-400 font-mono">@{u.username}</div>
+                        <div className="font-bold text-siem-text">{u.full_name}</div>
+                        <div className="text-[10px] text-siem-muted font-mono">@{u.username}</div>
                       </div>
                     </div>
                   </td>
@@ -301,10 +301,10 @@ export default function UserManagement() {
                       {u.role}
                     </div>
                   </td>
-                  <td className="p-4 text-xs font-mono text-slate-400">
+                  <td className="p-4 text-xs font-mono text-siem-muted">
                     UID-{String(u.id).padStart(4, '0')}
                   </td>
-                  <td className="p-4 text-xs text-slate-500">
+                  <td className="p-4 text-xs text-siem-muted">
                     {new Date(u.created_at).toLocaleDateString()}
                   </td>
                   <td className="p-4 pr-6 text-right">
@@ -333,47 +333,47 @@ export default function UserManagement() {
       {/* ── Create User Modal ── */}
       {showModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-6">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-100">
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+          <div className="bg-siem-panel rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-siem-border">
+            <div className="p-6 border-b border-siem-border flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-black text-slate-900">Provision New Identity</h2>
-                <p className="text-xs text-slate-400 font-medium mt-0.5">New account will require password change on first login</p>
+                <h2 className="text-lg font-black text-siem-text">Provision New Identity</h2>
+                <p className="text-xs text-siem-muted font-medium mt-0.5">New account will require password change on first login</p>
               </div>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-slate-400 hover:text-slate-600 text-xl font-black w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors"
+                className="text-siem-muted hover:text-siem-muted text-xl font-black w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors"
               >
                 ×
               </button>
             </div>
             <form onSubmit={handleCreate} className="p-6 space-y-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
+                <label className="text-[10px] font-black text-siem-muted uppercase tracking-widest ml-1">Full Name</label>
                 <input
                   type="text" required
                   value={formData.full_name}
                   onChange={e => setFormData({ ...formData, full_name: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2.5 bg-siem-bg border border-siem-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Security Analyst"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Username</label>
+                  <label className="text-[10px] font-black text-siem-muted uppercase tracking-widest ml-1">Username</label>
                   <input
                     type="text" required
                     value={formData.username}
                     onChange={e => setFormData({ ...formData, username: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2.5 bg-siem-bg border border-siem-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="analyst_02"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Role</label>
+                  <label className="text-[10px] font-black text-siem-muted uppercase tracking-widest ml-1">Role</label>
                   <select
                     value={formData.role}
                     onChange={e => setFormData({ ...formData, role: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold"
+                    className="w-full px-4 py-2.5 bg-siem-bg border border-siem-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold"
                   >
                     <option value="ANALYST">ANALYST</option>
                     <option value="ADMIN">ADMIN</option>
@@ -381,12 +381,12 @@ export default function UserManagement() {
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Temporary Password</label>
+                <label className="text-[10px] font-black text-siem-muted uppercase tracking-widest ml-1">Temporary Password</label>
                 <input
                   type="password" required
                   value={formData.password}
                   onChange={e => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2.5 bg-siem-bg border border-siem-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="••••••••"
                 />
               </div>

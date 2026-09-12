@@ -19,3 +19,24 @@ def compile_to_sql(ast: list) -> tuple:
             
     where_clause = " AND ".join(filters)
     return where_clause, tuple(params)
+
+def compile_to_es(ast: list) -> dict:
+    must_clauses = []
+    
+    for node in ast:
+        if node["type"] == "key_value":
+            k = node["key"]
+            v = node["value"]
+            if k == "source_ip":
+                must_clauses.append({"term": {"source.ip": v}})
+            elif k == "event_type":
+                must_clauses.append({"term": {"event.action": v}})
+            elif k == "severity":
+                must_clauses.append({"term": {"event.severity": v.lower()}})
+            else:
+                must_clauses.append({"match": {k: v}})
+        elif node["type"] == "general_term":
+            must_clauses.append({"query_string": {"query": f"*{node['value']}*"}})
+            
+    query = {"bool": {"must": must_clauses}} if must_clauses else {"match_all": {}}
+    return {"query": query}

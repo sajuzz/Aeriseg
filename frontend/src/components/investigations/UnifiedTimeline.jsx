@@ -26,7 +26,7 @@ const UnifiedTimeline = ({ investigationId, refreshTrigger }) => {
 
   if (loading) {
     return (
-      <div className="p-12 text-center text-slate-400 font-medium animate-pulse">
+      <div className="p-12 text-center text-siem-muted font-medium animate-pulse">
         <RefreshCw className="w-5 h-5 mx-auto mb-2 animate-spin opacity-20" />
         Loading narrative...
       </div>
@@ -35,31 +35,31 @@ const UnifiedTimeline = ({ investigationId, refreshTrigger }) => {
 
   if (timeline.length === 0) {
     return (
-      <div className="p-16 text-center border-2 border-dashed border-slate-100 rounded-2xl bg-slate-50/30 m-6">
-        <div className="bg-white w-12 h-12 rounded-full shadow-sm flex items-center justify-center mx-auto mb-4 border border-slate-100">
+      <div className="p-16 text-center border-2 border-dashed border-siem-border rounded-2xl bg-siem-bg/30 m-6">
+        <div className="bg-siem-panel w-12 h-12 rounded-full shadow-sm flex items-center justify-center mx-auto mb-4 border border-siem-border">
            <FileText className="w-6 h-6 text-slate-300" />
         </div>
         <h4 className="text-slate-800 font-bold text-sm mb-1">No activity narrative yet</h4>
-        <p className="text-xs text-slate-400 max-w-[200px] mx-auto leading-relaxed">Add evidence or analyst notes to build the chronological case history.</p>
+        <p className="text-xs text-siem-muted max-w-[200px] mx-auto leading-relaxed">Add evidence or analyst notes to build the chronological case history.</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full bg-white">
-      <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white/80 backdrop-blur-md z-10">
+    <div className="flex flex-col h-full bg-siem-panel">
+      <div className="px-8 py-6 border-b border-siem-border flex items-center justify-between sticky top-0 bg-siem-panel/80 backdrop-blur-md z-10">
         <div className="flex items-center gap-3">
            <div className="bg-blue-50 p-2 rounded-lg">
              <Clock className="w-4 h-4 text-blue-600" />
            </div>
            <div>
              <h3 className="font-bold text-slate-800 text-sm uppercase tracking-wider">Investigation Narrative</h3>
-             <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Chronological Ground Truth</p>
+             <p className="text-[10px] text-siem-muted font-bold uppercase tracking-widest mt-0.5">Chronological Ground Truth</p>
            </div>
         </div>
         <button 
           onClick={fetchTimeline}
-          className="p-2 hover:bg-slate-100 rounded-full transition-all text-slate-400 hover:text-blue-600 group"
+          className="p-2 hover:bg-slate-100 rounded-full transition-all text-siem-muted hover:text-blue-600 group"
           title="Refresh Narrative"
         >
           <RefreshCw className="w-4 h-4 group-active:rotate-180 transition-transform duration-500" />
@@ -67,7 +67,7 @@ const UnifiedTimeline = ({ investigationId, refreshTrigger }) => {
       </div>
 
       <div className="flex-1 overflow-y-auto p-10 custom-scrollbar">
-        <div className="relative pl-10 border-l-2 border-slate-100 space-y-12">
+        <div className="relative pl-10 border-l-2 border-siem-border space-y-12">
           {timeline.map((entry, index) => (
             <div key={entry.id} className="relative group">
               {/* Timeline Indicator */}
@@ -77,7 +77,7 @@ const UnifiedTimeline = ({ investigationId, refreshTrigger }) => {
 
               {/* Timestamp */}
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
+                <span className="text-[10px] font-bold text-siem-muted uppercase tracking-widest bg-siem-bg px-2 py-0.5 rounded border border-siem-border">
                   {new Date(entry.timestamp).toLocaleDateString()}
                 </span>
                 <span className="text-[10px] font-mono text-slate-300">
@@ -85,20 +85,20 @@ const UnifiedTimeline = ({ investigationId, refreshTrigger }) => {
                 </span>
               </div>
 
-              <div className="bg-white group-hover:bg-slate-50/50 transition-all rounded-xl p-2 -m-2">
+              <div className="bg-siem-panel group-hover:bg-siem-bg/50 transition-all rounded-xl p-2 -m-2">
                 <div className="flex flex-col gap-1">
-                  <div className="font-bold text-slate-900 text-sm tracking-tight flex items-center gap-2">
+                  <div className="font-bold text-siem-text text-sm tracking-tight flex items-center gap-2">
                     {entry.title}
                     {entry.severity && <StatusBadge status={entry.severity} />}
                   </div>
                   
-                  <div className="text-[13px] text-slate-600 mt-1.5 leading-relaxed font-medium">
+                  <div className="text-[13px] text-siem-muted mt-1.5 leading-relaxed font-medium">
                     {entry.description}
                   </div>
 
                   {entry.event_summary && (
                     <div className="flex items-center gap-2 mt-3">
-                       <div className="text-[10px] font-mono bg-slate-100 text-slate-500 px-2 py-1 rounded border border-slate-200">
+                       <div className="text-[10px] font-mono bg-slate-100 text-siem-muted px-2 py-1 rounded border border-siem-border">
                          {entry.event_summary}
                        </div>
                     </div>

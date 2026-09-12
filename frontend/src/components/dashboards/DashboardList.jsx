@@ -9,7 +9,7 @@ const DashboardList = ({ dashboards, loading, onSelect }) => {
         <div 
           key={dash.id}
           onClick={() => onSelect(dash)}
-          className="border border-gray-200 hover:border-blue-400 p-6 rounded-2xl cursor-pointer hover:shadow transition-all bg-white"
+          className="border border-gray-200 hover:border-blue-400 p-6 rounded-2xl cursor-pointer hover:shadow transition-all bg-siem-panel"
         >
           <h3 className="font-semibold text-xl text-gray-900 mb-2">{dash.name}</h3>
           <p className="text-gray-600 text-sm line-clamp-2">{dash.description}</p>

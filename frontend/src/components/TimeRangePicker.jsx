@@ -24,23 +24,23 @@ export default function TimeRangePicker({ value, onChange }) {
       <button
         id="time-range-picker-btn"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-50 transition-all shadow-sm"
+        className="flex items-center gap-2 px-3 py-1.5 bg-siem-panel border border-siem-border rounded-lg text-xs font-bold text-siem-text hover:bg-siem-bg transition-all shadow-sm"
       >
-        <Clock className="w-3.5 h-3.5 text-slate-400" />
+        <Clock className="w-3.5 h-3.5 text-siem-muted" />
         {selected.label}
-        <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-3.5 h-3.5 text-siem-muted transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className="absolute right-0 mt-2 w-44 bg-white border border-slate-200 rounded-xl shadow-xl z-50 py-1.5">
+          <div className="absolute right-0 mt-2 w-44 bg-siem-panel border border-siem-border rounded-xl shadow-xl z-50 py-1.5">
             {TIME_OPTIONS.map(option => (
               <button
                 key={option.value}
                 onClick={() => { onChange(option.value); setIsOpen(false); }}
-                className={`w-full text-left px-4 py-2 text-xs font-medium hover:bg-slate-50 transition-colors
-                  ${value === option.value ? 'text-blue-600 bg-blue-50/50 font-bold' : 'text-slate-600'}`}
+                className={`w-full text-left px-4 py-2 text-xs font-medium hover:bg-siem-bg transition-colors
+                  ${value === option.value ? 'text-blue-600 bg-blue-50/50 font-bold' : 'text-siem-muted'}`}
               >
                 {option.label}
               </button>

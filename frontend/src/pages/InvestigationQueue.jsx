@@ -37,8 +37,8 @@ export default function InvestigationQueue() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Investigation Queue</h1>
-          <p className="text-slate-500 text-sm">Manage and prioritize active security investigations.</p>
+          <h1 className="text-2xl font-bold text-siem-text tracking-tight">Investigation Queue</h1>
+          <p className="text-siem-muted text-sm">Manage and prioritize active security investigations.</p>
         </div>
         <button 
           onClick={createNew}
@@ -48,9 +48,9 @@ export default function InvestigationQueue() {
         </button>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+      <div className="bg-siem-panel border border-siem-border rounded-lg shadow-sm overflow-hidden">
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase tracking-wider font-bold text-slate-500">
+          <thead className="bg-siem-bg border-b border-siem-border text-[11px] uppercase tracking-wider font-bold text-siem-muted">
             <tr>
               <th className="px-6 py-3">Status</th>
               <th className="px-6 py-3">Title</th>
@@ -59,9 +59,9 @@ export default function InvestigationQueue() {
               <th className="px-6 py-3 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-siem-border">
             {investigations.map((inv) => (
-              <tr key={inv.id} className="hover:bg-slate-50 transition-colors">
+              <tr key={inv.id} className="hover:bg-siem-bg transition-colors">
                 <td className="px-6 py-4">
                   <StatusBadge status={inv.status} />
                 </td>
@@ -69,12 +69,12 @@ export default function InvestigationQueue() {
                   <Link to={`/investigations/${inv.id}`} className="font-semibold text-slate-800 hover:text-blue-600 transition-colors">
                     {inv.title}
                   </Link>
-                  <div className="text-[10px] text-slate-400 font-mono mt-0.5">{inv.id}</div>
+                  <div className="text-[10px] text-siem-muted font-mono mt-0.5">{inv.id}</div>
                 </td>
                 <td className="px-6 py-4">
                   <SeverityBadge severity={inv.severity} />
                 </td>
-                <td className="px-6 py-4 text-slate-500">
+                <td className="px-6 py-4 text-siem-muted">
                   <div className="flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5" />
                     {new Date(inv.updated_at).toLocaleString()}
@@ -90,7 +90,7 @@ export default function InvestigationQueue() {
           </tbody>
         </table>
         {investigations.length === 0 && !loading && (
-          <div className="p-12 text-center text-slate-400 italic font-medium">No investigations in queue.</div>
+          <div className="p-12 text-center text-siem-muted italic font-medium">No investigations in queue.</div>
         )}
       </div>
     </div>
@@ -101,7 +101,7 @@ function StatusBadge({ status }) {
   const styles = {
     OPEN: "bg-blue-50 text-blue-700 border-blue-200",
     INVESTIGATING: "bg-orange-50 text-orange-700 border-orange-200",
-    CLOSED: "bg-slate-50 text-slate-600 border-slate-200"
+    CLOSED: "bg-siem-bg text-siem-muted border-siem-border"
   };
   return (
     <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${styles[status]}`}>
@@ -118,7 +118,7 @@ function SeverityBadge({ severity }) {
     LOW: "text-green-600 font-bold"
   };
   return (
-    <span className={`text-[11px] uppercase tracking-wide ${styles[severity] || 'text-slate-500'}`}>
+    <span className={`text-[11px] uppercase tracking-wide ${styles[severity] || 'text-siem-muted'}`}>
       {severity}
     </span>
   );

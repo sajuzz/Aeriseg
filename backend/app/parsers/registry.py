@@ -1,4 +1,6 @@
 from .suricata import SuricataParser
+from .cloud_parser import CloudParser
+from .linux_parser import LinuxParser
 from .base import PlaceholderParser
 
 class ParserRegistry:
@@ -6,6 +8,9 @@ class ParserRegistry:
         # Active and Planned parsers
         self._parsers = {
             "suricata": SuricataParser(),
+            "aws": CloudParser(),
+            "cloud": CloudParser(),
+            "linux_agent": LinuxParser(),
             
             # Planned / Extensibility Demonstration
             "sysmon":  PlaceholderParser("sysmon"),
@@ -24,6 +29,7 @@ class ParserRegistry:
         """Returns metadata about all supported/planned data sources."""
         return [
             {"id": "suricata", "name": "Suricata IDS", "status": "active",      "category": "Network"},
+            {"id": "aws",      "name": "AWS CloudTrail", "status": "active",      "category": "Cloud"},
             {"id": "sysmon",   "name": "Windows Sysmon", "status": "planned",     "category": "Endpoint"},
             {"id": "hl7",      "name": "HL7 Medical",    "status": "planned",     "category": "Healthcare"},
             {"id": "modbus",   "name": "Modbus PLC",     "status": "planned",     "category": "OT/ICS"},

@@ -8,14 +8,18 @@ class IngestEvent(BaseModel):
     raw_log: Dict[str, Any]
 
 class CommonEventSchema(BaseModel):
+    event_id: Optional[str] = None
     timestamp: str
     source: str
+    hostname: Optional[str] = None
+    username: Optional[str] = None
+    source_ip: Optional[str] = None
+    destination_ip: Optional[str] = None
     event_type: str
-    source_ip: str
-    dest_ip: Optional[str] = None
-    rule_name: Optional[str] = None
+    severity: str = "INFO"
     raw_log: Dict[str, Any]
-    severity: str = "info"
+    metadata: Optional[Dict[str, Any]] = Field(default_factory=dict)
+    rule_name: Optional[str] = None
 
 class ThreatHuntQuery(BaseModel):
     query: str = Field(..., max_length=2048)

@@ -1,82 +1,82 @@
 import re
+import os
+import yaml
+import structlog
 
-# Advanced Rule Structure
-# match: dict of exact field matches (LOWER case)
-# contains: list of strings that must be in a specific field
-# regex: regex to run on raw_log
-# threshold: (optional) count and seconds
-# group_by: (optional) fields to group by for threshold
+log = structlog.get_logger()
 
-DETECTION_RULES = [
-    # ─── Network IDS (Suricata) Mappings ─────────────────────────────────────
-    {
-        "id": "SURICATA_SQLI",
-        "title": "SQL Injection Activity (Suricata)",
-        "severity": "CRITICAL",
-        "match": {"source": "suricata"},
-        "contains": {"rule_name": ["sql injection", "sqlmap", "union select"]},
-        "mitre_tactic": "Initial Access",
-        "mitre_technique": "T1190",
-        "threshold": {"count": 3, "seconds": 60},
-        "group_by": ["source_ip"]
-    },
-    {
-        "id": "SURICATA_SCAN",
-        "title": "Network Reconnaissance (Suricata)",
-        "severity": "MEDIUM",
-        "match": {"source": "suricata"},
-        "contains": {"rule_name": ["nmap", "portscan", "reconnaissance"]},
-        "mitre_tactic": "Reconnaissance",
-        "mitre_technique": "T1595",
-        "threshold": {"count": 10, "seconds": 300},
-        "group_by": ["source_ip"]
-    },
+# The unified path to the YAML detection rules
+RULES_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "detection-rules"))
 
-    # ─── Generic Web / Application Attacks ───────────────────────────────────
-    {
-        "id": "GENERIC_SQLI",
-        "title": "Generic SQL Injection Pattern",
-        "severity": "HIGH",
-        "regex": re.compile(r"(?i)union.*select|information_schema|waitfor delay"),
-        "mitre_tactic": "Initial Access",
-        "mitre_technique": "T1190"
-    },
-    {
-        "id": "GENERIC_XSS",
-        "title": "Cross-Site Scripting (XSS)",
-        "severity": "MEDIUM",
-        "regex": re.compile(r"(?i)<script>|%3Cscript%3E|onerror=|onload="),
-        "mitre_tactic": "Initial Access",
-        "mitre_technique": "T1190"
-    },
-    {
-        "id": "SSH_BRUTE_FORCE",
-        "title": "Brute Force Attempt (SSH)",
-        "severity": "HIGH",
-        "regex": re.compile(r"(?i)failed password|authentication failure"),
-        "mitre_tactic": "Credential Access",
-        "mitre_technique": "T1110",
-        "threshold": {"count": 5, "seconds": 300},
-        "group_by": ["source_ip"]
-    },
+def load_yaml_rules():
+    """Dynamically parses YAML rules into the engine format."""
+    rules_list = []
+    
+    if not os.path.exists(RULES_DIR):
+        log.warning("rules_dir_not_found", path=RULES_DIR)
+        return rules_list
+        
+    for filename in os.listdir(RULES_DIR):
+        if filename.endswith((".yml", ".yaml")):
+            path = os.path.join(RULES_DIR, filename)
+            try:
+                with open(path, "r") as f:
+                    rule = yaml.safe_load(f)
+                    
+                if not rule or not isinstance(rule, dict) or not rule.get('enabled', True):
+                    continue
+                    
+                # Compile regex if present
+                if "regex" in rule and isinstance(rule["regex"], str):
+                    rule["regex"] = re.compile(rule["regex"], re.IGNORECASE)
+                    
+                rules_list.append(rule)
+            except Exception as e:
+                log.error("rule_load_failed", file=filename, error=str(e))
+                
+    return rules_list
 
-    # ─── OT / Healthcare Specialized ─────────────────────────────────────────
-    {
-        "id": "HL7_ANOMALY",
-        "title": "Medical Device Protocol Anomaly",
-        "severity": "CRITICAL",
-        "match": {"source": "hl7"},
-        "contains": {"message": ["malformed", "invalid msh"]},
-        "mitre_tactic": "Impact",
-        "mitre_technique": "T1496"
-    },
-    {
-        "id": "MODBUS_UNAUTHORIZED_WRITE",
-        "title": "Unauthorized PLC Write Command",
-        "severity": "CRITICAL",
-        "match": {"source": "modbus"},
-        "contains": {"function_code": ["write", "force"]},
-        "mitre_tactic": "Impact",
-        "mitre_technique": "T0836"
-    }
-]
+def load_db_rules():
+    """Load rules from detection_rules table."""
+    import json
+    from app.repositories.rules_repository import rules_repository
+    rules_list = []
+    
+    try:
+        db_rules = rules_repository.get_all_rules()
+        for r in db_rules:
+            if not r["enabled"]:
+                continue
+                
+            rule = {
+                "id": r["id"],
+                "name": r["name"],
+                "title": r["name"],
+                "description": r["description"],
+                "severity": r["severity"],
+                "tactic": r["mitre_tactic"],
+                "mitre_technique": r["mitre_technique"],
+                "correlation": {
+                    "correlate_by": ["source_ip"],
+                    "correlation_window_secs": r["window_secs"] or 300,
+                    "threshold": r["threshold"] or 1
+                }
+            }
+            
+            try:
+                query = json.loads(r["query_json"])
+                rule["match"] = query
+            except json.JSONDecodeError:
+                pass
+                
+            rules_list.append(rule)
+    except Exception as e:
+        log.error("db_rules_load_failed", error=str(e))
+        
+    return rules_list
+
+def load_all_rules():
+    return load_yaml_rules() + load_db_rules()
+
+# Initialize with current rules on boot
+DETECTION_RULES = load_all_rules()

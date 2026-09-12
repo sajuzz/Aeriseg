@@ -5,7 +5,7 @@ export default function StatusBadge({ status, className = "" }) {
     // Investigation Status
     OPEN: "bg-blue-50 text-blue-700 border-blue-200",
     INVESTIGATING: "bg-orange-50 text-orange-700 border-orange-200",
-    CLOSED: "bg-slate-50 text-slate-600 border-slate-200",
+    CLOSED: "bg-siem-bg text-siem-muted border-siem-border",
     
     // Severity Levels
     CRITICAL: "bg-red-50 text-red-700 border-red-200",
@@ -14,7 +14,7 @@ export default function StatusBadge({ status, className = "" }) {
     LOW: "bg-green-50 text-green-700 border-green-200"
   };
 
-  const currentStyle = styles[status?.toUpperCase()] || "bg-slate-50 text-slate-600 border-slate-200";
+  const currentStyle = styles[status?.toUpperCase()] || "bg-siem-bg text-siem-muted border-siem-border";
 
   return (
     <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wider ${currentStyle} ${className}`}>

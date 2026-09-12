@@ -1,0 +1,50 @@
+# detection-rules/brute_force_login.yaml
+#
+# Example showing the NEW `correlation:` block added to the existing
+# AeriSeg YAML rule format. Every other field is unchanged from your
+# current rule schema — only `correlation:` is new.
+
+id: MS-002
+name: "Brute Force Login Attempt"
+description: "Repeated failed authentication attempts from a single source"
+severity: HIGH
+mitre_id: T1110
+tactic: "Credential Access"
+
+match:
+  event_type: failed_auth
+
+# ── Correlation & Throttle settings (NEW) ──────────────────────
+# If this block is omitted entirely, safe defaults are used:
+#   correlate_by: [source_ip], correlation_window_secs: 300,
+#   suppression_secs: 900, escalate_after: 50, max_samples: 25,
+#   exact_dedup_window_secs: 2.0
+correlation:
+  # Group events into one bucket when these fields match.
+  # Two failed_auth events from the same source_ip become ONE alert,
+  # not two — the second merges into the bucket the first one created.
+  correlate_by: [source_ip, rule_id]
+
+  threshold: 5
+
+  # Events arriving within 5 minutes of the last one extend the same
+  # bucket rather than starting a new correlation group.
+  correlation_window_secs: 300
+
+  # Once an alert is surfaced for this key, don't surface another one
+  # for the same key for 15 minutes — even if more matches keep coming.
+  suppression_secs: 900
+
+  # If 50+ matching events get suppressed during the cooldown (i.e. the
+  # attack is intensifying, not stopping), bump severity ONCE on the
+  # same alert_id rather than staying silent or spamming a new alert.
+  escalate_after: 50
+
+  # Cap how many sample events are stored as evidence per bucket —
+  # prevents unbounded memory growth during a sustained attack.
+  max_samples: 25
+
+  # Drop byte-identical repeats (e.g. sensor retransmission, NATS
+  # at-least-once redelivery) within this many seconds before they
+  # even reach the correlation logic above.
+  exact_dedup_window_secs: 2.0

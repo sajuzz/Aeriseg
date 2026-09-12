@@ -18,10 +18,50 @@ async def run_detections():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+import datetime as dt
+from dateutil.relativedelta import relativedelta
+
 @router.get("/alerts")
-async def get_alerts(status: str = "OPEN"):
+async def get_alerts(status: str = "OPEN", time: str = None, from_time: str = None, to_time: str = None):
     try:
-        alerts = alert_repo.get_alerts(status)
+        now = dt.datetime.now(dt.timezone.utc)
+        start_time = None
+        end_time = None
+
+        if from_time and to_time:
+            start_time = from_time
+            end_time = to_time
+        elif time:
+            time = time.lower()
+            if time == 'today':
+                start_time = now.replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
+                end_time = now.isoformat()
+            elif time == 'yesterday':
+                yesterday = now - dt.timedelta(days=1)
+                start_time = yesterday.replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
+                end_time = yesterday.replace(hour=23, minute=59, second=59, microsecond=999999).isoformat()
+            elif time == '7d' or time == 'last_7_days':
+                start_time = (now - dt.timedelta(days=7)).isoformat()
+                end_time = now.isoformat()
+            elif time == 'this_month':
+                start_time = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0).isoformat()
+                end_time = now.isoformat()
+            elif time == '15m':
+                start_time = (now - dt.timedelta(minutes=15)).isoformat()
+                end_time = now.isoformat()
+            elif time == '1h':
+                start_time = (now - dt.timedelta(hours=1)).isoformat()
+                end_time = now.isoformat()
+            else:
+                # Default 24 hours
+                start_time = (now - dt.timedelta(days=1)).isoformat()
+                end_time = now.isoformat()
+        else:
+            # Default to Last 24 Hours if nothing is provided
+            start_time = (now - dt.timedelta(days=1)).isoformat()
+            end_time = now.isoformat()
+
+        alerts = alert_repo.get_alerts(status, start_time, end_time)
         return {"status": "success", "data": alerts}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -8,7 +8,7 @@ export default function EventOverviewTab({ event, onPivot }) {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
       <section>
-        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Normalized Fields</h3>
+        <h3 className="text-[10px] font-bold text-siem-muted uppercase tracking-widest mb-3">Normalized Fields</h3>
         <div className="grid grid-cols-2 gap-4">
           <MetaField label="Event ID" value={event.event_id} />
           <MetaField label="Timestamp" value={new Date(event.timestamp).toLocaleString()} />
@@ -25,8 +25,8 @@ export default function EventOverviewTab({ event, onPivot }) {
 
       {event.raw_log?.message && (
         <section>
-           <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Message Summary</h3>
-           <div className="p-3 bg-slate-50 border border-slate-100 rounded-lg text-sm text-slate-700 leading-relaxed font-medium">
+           <h3 className="text-[10px] font-bold text-siem-muted uppercase tracking-widest mb-3">Message Summary</h3>
+           <div className="p-3 bg-siem-bg border border-siem-border rounded-lg text-sm text-siem-text leading-relaxed font-medium">
              {event.raw_log.message}
            </div>
         </section>
@@ -38,9 +38,9 @@ export default function EventOverviewTab({ event, onPivot }) {
 function MetaField({ label, value, onPivot, pivotKey }) {
   return (
     <div className="space-y-1 group">
-      <div className="text-[9px] font-bold text-slate-400 uppercase">{label}</div>
-      <div className="flex items-center justify-between bg-slate-50 p-2 rounded border border-slate-100 hover:border-blue-200 transition-colors">
-        <span className="text-xs font-mono text-slate-700 truncate mr-2">{value}</span>
+      <div className="text-[9px] font-bold text-siem-muted uppercase">{label}</div>
+      <div className="flex items-center justify-between bg-siem-bg p-2 rounded border border-siem-border hover:border-blue-200 transition-colors">
+        <span className="text-xs font-mono text-siem-text truncate mr-2">{value}</span>
         {onPivot && (
           <button 
             onClick={() => onPivot(pivotKey, value)}
@@ -78,7 +78,7 @@ function AssetContext({ ipAddress }) {
     fetchAsset();
   }, [ipAddress]);
 
-  if (loading) return <div className="h-20 animate-pulse bg-slate-50 rounded-lg border border-slate-100"></div>;
+  if (loading) return <div className="h-20 animate-pulse bg-siem-bg rounded-lg border border-siem-border"></div>;
   if (!asset) return null; // Silently hide if no asset context found
 
   return (

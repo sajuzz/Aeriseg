@@ -1,0 +1,15 @@
+<svg viewBox="0 0 320 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M50 8 L85 24 V56 C85 75.5 50 92 50 92 C50 92 15 75.5 15 56 V24 L50 8Z" fill="#2F4858"/>
+  <line x1="50" y1="25" x2="30" y2="70" stroke="#34D399" stroke-width="4" stroke-linecap="round"/>
+  <line x1="50" y1="25" x2="70" y2="70" stroke="#34D399" stroke-width="4" stroke-linecap="round"/>
+  <line x1="38" y1="52" x2="62" y2="52" stroke="#34D399" stroke-width="4" stroke-linecap="round"/>
+  <line x1="50" y1="52" x2="50" y2="70" stroke="#40826D" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="50" cy="25" r="5" fill="#FFF"/>
+  <circle cx="30" cy="70" r="4.5" fill="#FFF"/>
+  <circle cx="70" cy="70" r="4.5" fill="#FFF"/>
+  <circle cx="38" cy="52" r="4" fill="#FFF"/>
+  <circle cx="62" cy="52" r="4" fill="#FFF"/>
+  <circle cx="50" cy="52" r="4" fill="#FFF"/>
+  <circle cx="50" cy="70" r="4.5" fill="#40826D" stroke="#FFF" stroke-width="1.5"/>
+  <text x="105" y="65" font-family="'Inter', sans-serif" font-weight="700" font-size="42" fill="#334155" letter-spacing="-1">AeriSeg</text>
+</svg>

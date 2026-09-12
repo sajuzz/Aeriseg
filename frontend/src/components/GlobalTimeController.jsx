@@ -90,23 +90,23 @@ export default function GlobalTimeController({
         <button
           id="global-time-range-btn"
           onClick={() => { setTimeOpen(v => !v); setRefreshOpen(false); }}
-          className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-50 transition-all shadow-sm"
+          className="flex items-center gap-2 px-3 py-1.5 bg-siem-panel border border-siem-border rounded-lg text-xs font-bold text-siem-text hover:bg-siem-bg transition-all shadow-sm"
         >
-          <Clock className="w-3.5 h-3.5 text-slate-400" />
+          <Clock className="w-3.5 h-3.5 text-siem-muted" />
           {timeRange === 'custom' ? 'Custom Range' : selectedTime.label}
-          <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${timeOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`w-3.5 h-3.5 text-siem-muted transition-transform ${timeOpen ? 'rotate-180' : ''}`} />
         </button>
 
         {timeOpen && (
           <>
             <div className="fixed inset-0 z-40" onClick={() => setTimeOpen(false)} />
-            <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-xl z-50 py-1.5">
+            <div className="absolute right-0 mt-2 w-48 bg-siem-panel border border-siem-border rounded-xl shadow-xl z-50 py-1.5">
               {TIME_OPTIONS.map(option => (
                 <button
                   key={option.value}
                   onClick={() => handleTimeSelect(option)}
-                  className={`w-full text-left px-4 py-2 text-xs font-medium hover:bg-slate-50 transition-colors
-                    ${timeRange === option.value ? 'text-blue-600 bg-blue-50/50 font-bold' : 'text-slate-600'}`}
+                  className={`w-full text-left px-4 py-2 text-xs font-medium hover:bg-siem-bg transition-colors
+                    ${timeRange === option.value ? 'text-blue-600 bg-blue-50/50 font-bold' : 'text-siem-muted'}`}
                 >
                   {option.label}
                 </button>
@@ -124,7 +124,7 @@ export default function GlobalTimeController({
           className={`flex items-center gap-2 px-3 py-1.5 border rounded-lg text-xs font-bold transition-all shadow-sm
             ${refreshInterval > 0
               ? 'bg-emerald-50 border-emerald-300 text-emerald-700'
-              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'}`}
+              : 'bg-siem-panel border-siem-border text-siem-text hover:bg-siem-bg'}`}
         >
           <span className={`w-1.5 h-1.5 rounded-full ${refreshInterval > 0 ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
           {selectedRefresh.label === 'Off' ? 'Auto Refresh' : `Auto: ${selectedRefresh.label}`}
@@ -134,13 +134,13 @@ export default function GlobalTimeController({
         {refreshOpen && (
           <>
             <div className="fixed inset-0 z-40" onClick={() => setRefreshOpen(false)} />
-            <div className="absolute right-0 mt-2 w-40 bg-white border border-slate-200 rounded-xl shadow-xl z-50 py-1.5">
+            <div className="absolute right-0 mt-2 w-40 bg-siem-panel border border-siem-border rounded-xl shadow-xl z-50 py-1.5">
               {REFRESH_OPTIONS.map(option => (
                 <button
                   key={option.value}
                   onClick={() => handleRefreshSelect(option)}
-                  className={`w-full text-left px-4 py-2 text-xs font-medium hover:bg-slate-50 transition-colors
-                    ${refreshInterval === option.value ? 'text-blue-600 bg-blue-50/50 font-bold' : 'text-slate-600'}`}
+                  className={`w-full text-left px-4 py-2 text-xs font-medium hover:bg-siem-bg transition-colors
+                    ${refreshInterval === option.value ? 'text-blue-600 bg-blue-50/50 font-bold' : 'text-siem-muted'}`}
                 >
                   {option.label}
                 </button>
@@ -155,37 +155,37 @@ export default function GlobalTimeController({
         id="global-manual-refresh-btn"
         onClick={handleManualRefresh}
         title="Refresh now"
-        className="p-1.5 bg-white border border-slate-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-all shadow-sm group"
+        className="p-1.5 bg-siem-panel border border-siem-border rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-all shadow-sm group"
       >
-        <RefreshCw className={`w-3.5 h-3.5 text-slate-500 group-hover:text-blue-600 transition-all ${spinning ? 'animate-spin' : ''}`} />
+        <RefreshCw className={`w-3.5 h-3.5 text-siem-muted group-hover:text-blue-600 transition-all ${spinning ? 'animate-spin' : ''}`} />
       </button>
 
       {/* ── Custom Range Panel ── */}
       {showCustom && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setShowCustom(false)} />
-          <div className="absolute right-0 top-12 mt-1 w-72 bg-white border border-slate-200 rounded-xl shadow-2xl z-50 p-4 space-y-3"
+          <div className="absolute right-0 top-12 mt-1 w-72 bg-siem-panel border border-siem-border rounded-xl shadow-2xl z-50 p-4 space-y-3"
                style={{ position: 'fixed', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}>
             <div className="flex items-center gap-2 mb-2">
               <Calendar className="w-4 h-4 text-blue-500" />
               <h4 className="text-xs font-black text-slate-800 uppercase tracking-widest">Custom Time Range</h4>
             </div>
             <div>
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-1">Start (UTC)</label>
+              <label className="text-[10px] font-bold text-siem-muted uppercase tracking-widest block mb-1">Start (UTC)</label>
               <input
                 type="datetime-local"
                 value={localStart}
                 onChange={e => setLocalStart(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-siem-border rounded-lg text-xs font-medium text-siem-text focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-1">End (UTC)</label>
+              <label className="text-[10px] font-bold text-siem-muted uppercase tracking-widest block mb-1">End (UTC)</label>
               <input
                 type="datetime-local"
                 value={localEnd}
                 onChange={e => setLocalEnd(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-siem-border rounded-lg text-xs font-medium text-siem-text focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div className="flex gap-2 pt-1">
@@ -198,7 +198,7 @@ export default function GlobalTimeController({
               </button>
               <button
                 onClick={() => setShowCustom(false)}
-                className="px-4 py-2 border border-slate-200 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-50 transition-colors"
+                className="px-4 py-2 border border-siem-border text-siem-muted text-xs font-bold rounded-lg hover:bg-siem-bg transition-colors"
               >
                 Cancel
               </button>

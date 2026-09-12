@@ -1,0 +1,21 @@
+# Second example — a CRITICAL rule with tighter throttling, since a
+# false positive storm here would be especially disruptive to the SOC.
+
+id: MS-001
+name: "DICOM Mass Exfiltration"
+description: "Large outbound transfer from a PACS / imaging system"
+severity: CRITICAL
+mitre_id: T1048
+tactic: "Exfiltration"
+
+match:
+  event_type: large_transfer
+  min_bytes_out: 500000
+
+correlation:
+  correlate_by: [source_ip, dest_ip]
+  correlation_window_secs: 600     # 10 minutes — exfil bursts can be slower
+  suppression_secs: 1800           # 30 minutes — one CRITICAL alert is enough
+  escalate_after: 10               # CRITICAL rules escalate sooner — less tolerance
+  max_samples: 25
+  exact_dedup_window_secs: 2.0

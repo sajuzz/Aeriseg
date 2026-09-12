@@ -58,7 +58,7 @@ const ResponseActionPanel = ({ investigationId, onActionExecuted }) => {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center gap-2">
+      <div className="px-6 py-4 border-b border-siem-border bg-siem-bg/50 flex items-center gap-2">
          <Zap className="w-4 h-4 text-red-500 fill-red-500" />
          <h3 className="text-[10px] font-bold text-slate-800 uppercase tracking-widest">Containment Strategy</h3>
       </div>
@@ -70,20 +70,20 @@ const ResponseActionPanel = ({ investigationId, onActionExecuted }) => {
             <button
               key={act.type}
               onClick={() => handleActionClick(act.type)}
-              className="w-full flex items-center gap-4 p-4 bg-white border border-slate-200 hover:border-red-400 hover:bg-red-50/30 rounded-2xl text-left transition-all group shadow-sm"
+              className="w-full flex items-center gap-4 p-4 bg-siem-panel border border-siem-border hover:border-red-400 hover:bg-red-50/30 rounded-2xl text-left transition-all group shadow-sm"
             >
-              <div className="p-2.5 bg-slate-50 rounded-xl group-hover:bg-red-100 group-hover:text-red-600 transition-colors">
+              <div className="p-2.5 bg-siem-bg rounded-xl group-hover:bg-red-100 group-hover:text-red-600 transition-colors">
                 {act.icon}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="font-bold text-slate-800 text-xs group-hover:text-red-700 transition-colors uppercase tracking-tight">{act.label}</div>
-                <div className="text-[10px] text-slate-400 mt-0.5 font-medium">{act.desc}</div>
+                <div className="text-[10px] text-siem-muted mt-0.5 font-medium">{act.desc}</div>
               </div>
             </button>
           ))}
         </div>
 
-        <hr className="border-slate-100" />
+        <hr className="border-siem-border" />
 
         {/* Action History */}
         <ActionHistoryTable 

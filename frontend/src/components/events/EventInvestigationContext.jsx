@@ -31,19 +31,19 @@ export default function EventInvestigationContext({ eventId }) {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
-      <section className="bg-slate-50 border border-slate-200 rounded-xl p-5 shadow-sm">
+      <section className="bg-siem-bg border border-siem-border rounded-xl p-5 shadow-sm">
         <div className="flex items-center gap-2 mb-4 text-slate-800">
           <LinkIcon className="w-4 h-4 text-blue-600" />
           <h3 className="text-xs font-bold uppercase tracking-widest">Evidence Promotion</h3>
         </div>
         
-        <p className="text-[11px] text-slate-500 mb-4 leading-relaxed">
+        <p className="text-[11px] text-siem-muted mb-4 leading-relaxed">
           Promote this telemetry into a formal investigation to track activity timelines and link related findings.
         </p>
 
         <div className="space-y-3">
           <select 
-            className="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-xs outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
+            className="w-full bg-siem-panel border border-siem-border rounded-lg p-2.5 text-xs outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
             value={selected}
             onChange={(e) => setSelected(e.target.value)}
           >
@@ -69,10 +69,10 @@ export default function EventInvestigationContext({ eventId }) {
       </section>
 
       <section>
-         <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Case History</h3>
-         <div className="bg-slate-50 rounded-lg p-8 text-center border border-dashed border-slate-200">
+         <h3 className="text-[10px] font-bold text-siem-muted uppercase tracking-widest mb-3">Case History</h3>
+         <div className="bg-siem-bg rounded-lg p-8 text-center border border-dashed border-siem-border">
             <Info className="w-6 h-6 text-slate-300 mx-auto mb-2" />
-            <p className="text-[10px] text-slate-400">This event has not been linked to any previous cases.</p>
+            <p className="text-[10px] text-siem-muted">This event has not been linked to any previous cases.</p>
          </div>
       </section>
     </div>

@@ -10,7 +10,7 @@ export default function EventJsonTab({ event }) {
   return (
     <div className="space-y-4 animate-in zoom-in-95 duration-300">
       <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2 text-slate-500">
+        <div className="flex items-center gap-2 text-siem-muted">
           <Code className="w-4 h-4" />
           <span className="text-[10px] font-bold uppercase tracking-widest">JSON Payload</span>
         </div>

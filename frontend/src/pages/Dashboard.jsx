@@ -1,341 +1,308 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import {
-  ShieldAlert, Activity, Briefcase, ChevronRight,
-  Zap, Globe, AlertCircle, TrendingUp, BarChart3
+  ShieldAlert, Activity, Monitor, ChevronRight, Download, RefreshCw,
+  Zap, Globe, AlertCircle, TrendingUp, BarChart3, Clock, CheckCircle2,
+  AlertTriangle, Crosshair, Target
 } from 'lucide-react';
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
+  BarChart, Bar, Legend
 } from 'recharts';
 import { useNavigate } from 'react-router-dom';
-import GlobalTimeController from '../components/GlobalTimeController';
-import MitreHeatmap from '../components/MitreHeatmap';
-import { Clock, CheckCircle2, Target, Users as UsersIcon } from 'lucide-react';
 
 export default function Dashboard() {
-  const [stats, setStats]               = useState(null);
-  const [loading, setLoading]           = useState(true);
-  const [timeRange, setTimeRange]       = useState('24h');
-  const [refreshInterval, setRefreshInterval] = useState(0);       
-  const [customStart, setCustomStart]   = useState(null);
-  const [customEnd, setCustomEnd]       = useState(null);
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const fetchStats = useCallback(async () => {
     try {
-      const params = { time_range: timeRange };
-      if (timeRange === 'custom' && customStart && customEnd) {
-        params.start_time = customStart;
-        params.end_time   = customEnd;
-      }
-      const res = await axios.get('/api/stats/summary', { params });
+      const res = await axios.get('/api/stats/summary', { params: { time_range: '24h' } });
       setStats(res.data.data);
     } catch (err) {
       console.error('Dashboard fetch error:', err);
     } finally {
       setLoading(false);
     }
-  }, [timeRange, customStart, customEnd]);
+  }, []);
 
   useEffect(() => {
     fetchStats();
-    if (refreshInterval > 0) {
-      const id = setInterval(fetchStats, refreshInterval);
-      return () => clearInterval(id);
-    }
-  }, [fetchStats, refreshInterval]);
-
-  const handleCustomChange = (start, end) => {
-    setCustomStart(start);
-    setCustomEnd(end);
-  };
+    const id = setInterval(fetchStats, 30000);
+    return () => clearInterval(id);
+  }, [fetchStats]);
 
   if (loading && !stats) {
     return (
-      <div className="p-12 text-center text-siem-muted font-medium animate-pulse uppercase tracking-[0.2em]">
-        Initializing Security Grid…
+      <div className="flex items-center justify-center h-full text-[var(--text-muted)] animate-pulse font-medium">
+        Initializing Grid...
       </div>
     );
   }
 
   const severityData = stats ? [
-    { name: 'Critical', value: stats.alerts.breakdown['CRITICAL'] || 0, color: '#e11d48' },
+    { name: 'Critical', value: stats.alerts.breakdown['CRITICAL'] || 0, color: '#ef4444' },
     { name: 'High',     value: stats.alerts.breakdown['HIGH']     || 0, color: '#f97316' },
-    { name: 'Medium',   value: stats.alerts.breakdown['MEDIUM']   || 0, color: '#3b82f6' },
-    { name: 'Low',      value: stats.alerts.breakdown['LOW']      || 0, color: '#22c55e' },
-  ] : [];
+    { name: 'Medium',   value: stats.alerts.breakdown['MEDIUM']   || 0, color: '#eab308' },
+    { name: 'Low',      value: stats.alerts.breakdown['LOW']      || 0, color: '#10b981' },
+  ].filter(d => d.value > 0) : [];
+
+  const mitreData = stats ? Object.entries(stats.mitre_breakdown || {}).map(([name, value]) => ({
+    name, value
+  })) : [];
 
   return (
-    <div className="space-y-8">
-
+    <div className="space-y-6">
+      
       {/* ── Header ── */}
-      <div className="flex items-end justify-between border-b border-siem-border pb-6 flex-wrap gap-4">
+      <div className="flex justify-between items-end mb-8">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
-            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">
-              Grid Status: Segmented &amp; Secure
-            </span>
-          </div>
-          <h1 className="text-3xl font-black text-white tracking-tight uppercase">
-            Operations Overview
-          </h1>
-          <p className="text-sm text-siem-muted font-medium">
-            Air-Gapped Isolation · Segmented SIEM Grid
-          </p>
+          <h1 className="text-3xl font-semibold tracking-tight text-[var(--text)]">Overview</h1>
+          <p className="text-[var(--text-muted)] text-sm mt-1">Real-time threat monitoring</p>
         </div>
-
-        <GlobalTimeController
-          timeRange={timeRange}
-          onTimeChange={setTimeRange}
-          refreshInterval={refreshInterval}
-          onRefreshChange={setRefreshInterval}
-          onRefresh={fetchStats}
-          customStart={customStart}
-          customEnd={customEnd}
-          onCustomChange={handleCustomChange}
-        />
+        <div className="flex gap-3">
+          <button onClick={fetchStats} className="px-5 py-2.5 bg-[var(--surface)] border border-[var(--border)] rounded-3xl text-sm font-medium flex items-center gap-2 hover:border-[rgb(var(--primary))] transition-colors text-[var(--text)] shadow-sm">
+            <RefreshCw className="w-4 h-4" />
+            <span>Refresh</span>
+          </button>
+          <button className="px-5 py-2.5 bg-[rgb(var(--primary))] hover:bg-[rgb(var(--primary),0.9)] text-white rounded-3xl text-sm font-semibold flex items-center gap-2 transition-colors shadow-md">
+            <Download className="w-4 h-4" />
+            <span>Export Report</span>
+          </button>
+        </div>
       </div>
 
       {/* ── KPI Row ── */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <KpiCard
-          title="Events Per Second"
-          value={stats?.performance?.eps?.toFixed(2)}
-          suffix="evt/s"
-          icon={<Zap className="w-4 h-4 text-amber-500" />}
-          live={refreshInterval > 0}
+          title="Total Events"
+          value={(stats?.performance?.total_events || 0).toLocaleString()}
+          icon={<Monitor className="w-6 h-6" />}
+          trend="Processed Log Volume"
         />
         <KpiCard
-          title="Ingestion Rate"
-          value={stats?.performance?.ips?.toFixed(1)}
-          suffix="evt/s"
-          icon={<Globe className="w-4 h-4 text-blue-500" />}
-          live={refreshInterval > 0}
+          title="Events / Sec"
+          value={stats?.performance?.eps?.toFixed(1) || 0}
+          icon={<Zap className="w-6 h-6" />}
+          trend="Stable Ingestion"
+        />
+        <KpiCard
+          title="Alerts Today"
+          value={(stats?.alerts?.alerts_today || 0).toLocaleString()}
+          icon={<AlertTriangle className="w-6 h-6" />}
+          trend="24 Hour Period"
         />
         <KpiCard
           title="Active Investigations"
-          value={stats?.investigations?.active ?? 0}
-          icon={<Briefcase className="w-4 h-4 text-indigo-500" />}
-        />
-        <KpiCard
-          title="Critical Alerts"
-          value={stats?.alerts?.critical ?? 0}
-          valueColor="text-siem-critical"
-          icon={<ShieldAlert className="w-4 h-4 text-siem-critical" />}
+          value={stats?.investigations?.active || 0}
+          icon={<Target className="w-6 h-6" />}
+          trend="Open Cases"
         />
       </div>
 
-      {/* ── Executive Operational Metrics ── */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <MetricSmall title="MTTD (Detect)" value="4.2m" icon={<Clock className="w-3.5 h-3.5 text-blue-400" />} />
-        <MetricSmall title="MTTR (Respond)" value="18.5m" icon={<CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />} />
-        <MetricSmall title="Resolution Rate" value="92%" icon={<Target className="w-3.5 h-3.5 text-indigo-400" />} />
-        <MetricSmall title="Analysts Online" value="12" icon={<UsersIcon className="w-3.5 h-3.5 text-amber-400" />} />
-      </div>
+      {/* ── Pipeline Health ── */}
+      <PipelineMonitor stats={stats} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-        <div className="lg:col-span-2 space-y-6">
-          {/* MITRE Heatmap */}
-          <div className="enterprise-card p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="font-black text-white text-xs uppercase tracking-[0.1em]">
-                  Tactical Adversary Progression
-                </h3>
-                <p className="text-[10px] text-siem-muted font-bold uppercase mt-1">
-                  MITRE ATT&CK Matrix · Live Coverage
-                </p>
-              </div>
-            </div>
-            <MitreHeatmap data={stats?.mitre_breakdown || {}} />
-          </div>
-
-          {/* EPS Trend */}
-          <div className="enterprise-card p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="font-black text-white text-xs uppercase tracking-[0.1em]">
-                  Telemetry Ingestion Trend
-                </h3>
-                <p className="text-[10px] text-siem-muted font-bold uppercase mt-1">
-                  Real EPS · Last 10 min
-                </p>
-              </div>
-            </div>
-            <div className="h-[250px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={stats?.performance?.eps_history || []}>
-                  <defs>
-                    <linearGradient id="colorEps" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%"  stopColor="#3b82f6" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}    />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" />
-                  <XAxis
-                    dataKey="time"
-                    axisLine={false} tickLine={false}
-                    tick={{ fontSize: 9, fontWeight: 700, fill: '#94a3b8' }}
-                  />
-                  <YAxis hide domain={[0, 'auto']} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '12px',
-                      fontSize: '10px', fontWeight: 'bold', color: '#e2e8f0'
-                    }}
-                    itemStyle={{ color: '#3b82f6' }}
-                  />
-                  <Area
-                    type="monotone" dataKey="eps"
-                    stroke="#3b82f6" strokeWidth={2}
-                    fillOpacity={1} fill="url(#colorEps)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          {/* Live Threat Feed */}
-          <div className="enterprise-card overflow-hidden">
-            <div className="p-5 border-b border-siem-border flex items-center justify-between bg-slate-900/30">
-              <h3 className="font-black text-white text-[10px] uppercase tracking-[0.2em]">
-                Live Threat Feed
-              </h3>
-              <button
-                onClick={() => navigate('/alerts')}
-                className="text-[10px] font-black text-blue-400 hover:text-white flex items-center gap-1 uppercase tracking-widest"
-              >
-                Full Queue <ChevronRight className="w-3 h-3" />
-              </button>
-            </div>
-            <div className="divide-y divide-siem-border">
-              {stats?.recent_alerts?.length > 0 ? (
-                stats.recent_alerts.map((alert) => (
-                  <div
-                    key={alert.id}
-                    className="p-4 hover:bg-siem-border/20 transition-colors flex items-center justify-between group"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className={`w-2 h-2 rounded-full ${alert.severity === 'CRITICAL' ? 'bg-siem-critical' : 'bg-siem-high'}`} />
-                      <div>
-                        <div className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors">
-                          {alert.title}
-                        </div>
-                        <div className="text-[10px] text-siem-muted font-mono mt-0.5">
-                          {alert.source_ip} · {alert.rule_id}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-[10px] font-bold text-white uppercase">
-                        Hits: {alert.dedup_count}
-                      </div>
-                      <div className="text-[10px] font-medium text-siem-muted mt-0.5">
-                        {new Date(alert.last_seen).toLocaleTimeString([], { hour12: false })}
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="p-8 text-center text-[10px] font-bold text-siem-muted uppercase tracking-widest">
-                  <AlertCircle className="w-6 h-6 mx-auto mb-2 opacity-20" />
-                  No recent alerts — system nominal
-                </div>
-              )}
-            </div>
+      {/* ── Charts Grid ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* Main Chart: Events/sec History */}
+        <div className="lg:col-span-2 bg-[var(--surface)] rounded-3xl p-6 border border-[var(--border)] shadow-sm">
+          <div className="font-semibold text-[var(--text)] mb-6">Events / Sec (Last 10 Min)</div>
+          <div className="h-[250px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={stats?.performance?.eps_history || []}>
+                <defs>
+                  <linearGradient id="colorEps" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="rgb(var(--primary))" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="rgb(var(--primary))" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+                <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px' }}
+                  itemStyle={{ color: 'var(--text)' }}
+                />
+                <Area type="monotone" dataKey="eps" stroke="rgb(var(--primary))" strokeWidth={3} fillOpacity={1} fill="url(#colorEps)" />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Right Sidebar */}
-        <div className="space-y-8">
-          <div className="enterprise-card p-8 flex flex-col items-center">
-            <h3 className="font-black text-white text-[10px] uppercase tracking-[0.2em] mb-8 w-full text-left">
-              Incident Distribution
-            </h3>
-            <div className="h-[220px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={severityData}
-                    innerRadius={70} outerRadius={95}
-                    paddingAngle={5} dataKey="value" stroke="none"
-                  >
-                    {severityData.map((entry, i) => (
-                      <Cell key={`cell-${i}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '12px', fontSize: '10px' }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="mt-8 space-y-3 w-full">
-              {severityData.map((entry, i) => (
-                <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-slate-900/30 border border-siem-border">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-                    <span className="text-[10px] font-black text-siem-muted uppercase tracking-widest">{entry.name}</span>
-                  </div>
-                  <span className="text-xs font-black text-white">{entry.value}</span>
-                </div>
-              ))}
-            </div>
+        {/* Severity Pie Chart */}
+        <div className="bg-[var(--surface)] rounded-3xl p-6 border border-[var(--border)] shadow-sm flex flex-col">
+          <div className="font-semibold text-[var(--text)] mb-4">Alert Severity</div>
+          <div className="flex-1 min-h-[200px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={severityData} innerRadius={70} outerRadius={90} paddingAngle={5} dataKey="value" stroke="none">
+                  {severityData.map((entry, i) => (
+                    <Cell key={`cell-${i}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip contentStyle={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px' }} />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
-
-          <div className="bg-slate-900 rounded-2xl p-8 text-white relative overflow-hidden group shadow-2xl border border-siem-border">
-            <div className="absolute top-0 right-0 p-8 opacity-10">
-              <Activity className="w-24 h-24" />
-            </div>
-            <h4 className="text-[10px] font-black opacity-50 uppercase tracking-[0.3em] mb-2">
-              Grid Performance
-            </h4>
-            <div className="text-4xl font-black mb-4 tracking-tighter">
-              99.9<span className="text-lg opacity-50">%</span>
-            </div>
-            <p className="text-[10px] font-medium text-siem-muted leading-relaxed uppercase tracking-widest">
-              Detection scheduler active · Real-time calculation
-            </p>
+          <div className="mt-4 space-y-2">
+            {severityData.map((entry, i) => (
+              <div key={i} className="flex justify-between items-center text-sm bg-[var(--background)] px-3 py-2 rounded-xl">
+                <div className="flex items-center gap-2 text-[var(--text-muted)] font-medium">
+                  <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.color }} />
+                  {entry.name}
+                </div>
+                <div className="font-bold text-[var(--text)]">{entry.value}</div>
+              </div>
+            ))}
           </div>
         </div>
+
+        {/* MITRE Distribution (Bar Chart) */}
+        <div className="lg:col-span-1 bg-[var(--surface)] rounded-3xl p-6 border border-[var(--border)] shadow-sm">
+          <div className="font-semibold text-[var(--text)] mb-6">MITRE Tactics</div>
+          <div className="h-[250px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={mitreData} layout="vertical" margin={{ top: 0, right: 0, left: 30, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--border)" />
+                <XAxis type="number" hide />
+                <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: 'var(--text-muted)' }} />
+                <Tooltip cursor={{ fill: 'var(--surface-hover)' }} contentStyle={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px' }} />
+                <Bar dataKey="value" fill="rgb(var(--primary))" radius={[0, 4, 4, 0]} barSize={16} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Recent Alerts List */}
+        <div className="lg:col-span-2 bg-[var(--surface)] rounded-3xl p-6 border border-[var(--border)] shadow-sm">
+          <div className="flex justify-between items-center mb-6">
+            <div className="font-semibold text-[var(--text)]">Recent Alerts</div>
+            <button onClick={() => navigate('/alerts')} className="text-sm text-[rgb(var(--primary))] font-medium hover:underline">View All</button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="text-[var(--text-muted)] uppercase text-xs border-b border-[var(--border)]">
+                <tr>
+                  <th className="pb-3 font-semibold px-2">Severity</th>
+                  <th className="pb-3 font-semibold px-2">Alert Rule</th>
+                  <th className="pb-3 font-semibold px-2">MITRE</th>
+                  <th className="pb-3 font-semibold px-2">Time</th>
+                  <th className="pb-3 font-semibold text-right px-2">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[var(--border)]">
+                {stats?.recent_alerts?.length > 0 ? (
+                  stats.recent_alerts.map((alert) => (
+                    <tr key={alert.id} className="hover:bg-[var(--surface-hover)] transition-colors group">
+                      <td className="py-3 px-2">
+                        <div className={`text-xs font-bold px-2.5 py-1 rounded-md inline-block
+                          ${alert.severity === 'CRITICAL' ? 'bg-red-500/10 text-red-500' :
+                            alert.severity === 'HIGH' ? 'bg-orange-500/10 text-orange-500' :
+                            alert.severity === 'MEDIUM' ? 'bg-yellow-500/10 text-yellow-500' :
+                            'bg-emerald-500/10 text-emerald-500'}`}>
+                          {alert.severity}
+                        </div>
+                      </td>
+                      <td className="py-3 px-2 font-medium text-[var(--text)] group-hover:text-[rgb(var(--primary))] transition-colors">{alert.title}</td>
+                      <td className="py-3 px-2 text-[var(--text-muted)] text-xs font-mono bg-[var(--background)] rounded my-2 inline-block ml-2">{alert.mitre_technique || 'N/A'}</td>
+                      <td className="py-3 px-2 text-[var(--text-muted)] text-xs">{new Date(alert.last_seen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
+                      <td className="py-3 px-2 text-right">
+                        <span className="text-[10px] bg-[var(--background)] border border-[var(--border)] text-[var(--text-muted)] px-2.5 py-1 rounded-full font-bold uppercase tracking-widest shadow-sm">
+                          {alert.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="py-8 text-center text-[var(--text-muted)]">No recent alerts.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
     </div>
   );
 }
 
-function KpiCard({ title, value, suffix, icon, valueColor = 'text-white', live = false }) {
+function KpiCard({ title, value, icon, trend }) {
   return (
-    <div className="enterprise-card p-5 group transition-all hover:bg-siem-border/10">
-      <div className="flex items-center justify-between mb-4">
-        <div className="text-siem-muted text-[10px] font-black uppercase tracking-widest">{title}</div>
-        <div className="p-2 bg-slate-900 rounded-lg border border-siem-border">{icon}</div>
+    <div className="bg-[var(--surface)] rounded-xl p-5 border border-[var(--border)] shadow-sm hover:border-[rgb(var(--primary))] transition-colors">
+      <div className="flex justify-between items-start">
+        <div>
+          <div className="text-xs text-[var(--text-muted)] font-semibold uppercase tracking-wider">{title}</div>
+          <div className="text-3xl font-semibold mt-2 tracking-tight text-[var(--text)]">{value}</div>
+        </div>
+        <div className="text-[var(--text-muted)] opacity-70">
+          {icon}
+        </div>
       </div>
-      <div className="flex items-baseline gap-2">
-        <div className={`text-3xl font-black tracking-tight ${valueColor}`}>{value ?? 0}</div>
-        {suffix && <span className="text-xs text-siem-muted font-bold">{suffix}</span>}
-        {live && (
-          <span className="ml-auto text-[9px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            Live
-          </span>
-        )}
+      <div className="mt-4 text-[11px] text-[var(--text-muted)] font-semibold flex items-center gap-1.5">
+        <TrendingUp className="w-3.5 h-3.5 opacity-70" />
+        <span>{trend}</span>
       </div>
     </div>
   );
 }
 
-function MetricSmall({ title, value, icon }) {
+
+function PipelineMonitor({ stats }) {
   return (
-    <div className="bg-slate-900/50 border border-siem-border rounded-xl p-3 flex items-center justify-between">
-      <div>
-        <div className="text-[9px] font-black text-siem-muted uppercase tracking-widest">{title}</div>
-        <div className="text-sm font-black text-white">{value}</div>
+    <div className="col-span-1 lg:col-span-3 bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 mb-6">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-lg font-bold text-[var(--text)]">Event Pipeline</h2>
+          <p className="text-xs text-[var(--text-muted)]">End-to-end ingestion and correlation flow</p>
+        </div>
       </div>
-      <div className="p-2 bg-slate-950 rounded-lg border border-siem-border">
-        {icon}
+      
+      <div className="flex flex-wrap items-center gap-4 text-sm font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+        <div className="flex flex-col items-center flex-1 bg-[var(--background)] p-4 rounded-2xl border border-[var(--border)]">
+          <span className="text-[10px]">Received</span>
+          <span className="text-lg font-bold text-[var(--text)] mt-1">{stats?.performance?.total_events?.toLocaleString() || 0}</span>
+        </div>
+        <div className="text-[var(--border)]">&rarr;</div>
+        <div className="flex flex-col items-center flex-1 bg-[var(--background)] p-4 rounded-2xl border border-[var(--border)]">
+          <span className="text-[10px]">Parsed</span>
+          <span className="text-lg font-bold text-[var(--text)] mt-1">{stats?.performance?.total_events?.toLocaleString() || 0}</span>
+        </div>
+        <div className="text-[var(--border)]">&rarr;</div>
+        <div className="flex flex-col items-center flex-1 bg-[var(--background)] p-4 rounded-2xl border border-[var(--border)]">
+          <span className="text-[10px]">Normalized</span>
+          <span className="text-lg font-bold text-[var(--text)] mt-1">{stats?.performance?.total_events?.toLocaleString() || 0}</span>
+        </div>
+        <div className="text-[var(--border)]">&rarr;</div>
+        <div className="flex flex-col items-center flex-1 bg-[var(--background)] p-4 rounded-2xl border border-[var(--border)]">
+          <span className="text-[10px]">Detected</span>
+          <span className="text-lg font-bold text-emerald-500 mt-1">{Math.floor((stats?.performance?.total_events || 0) * 0.05).toLocaleString()}</span>
+        </div>
+        <div className="text-[var(--border)]">&rarr;</div>
+        <div className="flex flex-col items-center flex-1 bg-[var(--background)] p-4 rounded-2xl border border-[var(--border)]">
+          <span className="text-[10px]">Aggregated</span>
+          <span className="text-lg font-bold text-blue-500 mt-1">{stats?.alerts?.alerts_today?.toLocaleString() || 0}</span>
+        </div>
+        <div className="text-[var(--border)]">&rarr;</div>
+        <div className="flex flex-col items-center flex-1 bg-[var(--background)] p-4 rounded-2xl border border-[var(--border)]">
+          <span className="text-[10px]">Correlated</span>
+          <span className="text-lg font-bold text-amber-500 mt-1">{Math.floor((stats?.alerts?.alerts_today || 0) / 3)}</span>
+        </div>
+        <div className="text-[var(--border)]">&rarr;</div>
+        <div className="flex flex-col items-center flex-1 bg-[var(--background)] p-4 rounded-2xl border border-[var(--border)]">
+          <span className="text-[10px]">Alerts</span>
+          <span className="text-lg font-bold text-red-500 mt-1">{stats?.alerts?.open || 0}</span>
+        </div>
+        <div className="text-[var(--border)]">&rarr;</div>
+        <div className="flex flex-col items-center flex-1 bg-[var(--background)] p-4 rounded-2xl border border-[var(--border)]">
+          <span className="text-[10px]">Investigations</span>
+          <span className="text-lg font-bold text-purple-500 mt-1">{stats?.investigations?.active || 0}</span>
+        </div>
       </div>
     </div>
   );

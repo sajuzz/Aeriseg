@@ -35,14 +35,23 @@ npm install
 cd ..
 ```
 
-### 3. Launching the Grid
-AeriSeg features an integrated bootstrapper that starts the entire stack:
+### 3. Launching the Application (How to Run)
+AeriSeg features an integrated Python bootstrapper that automatically starts both the FastAPI backend and the React frontend concurrently.
+
+To run the application, simply execute the `start.py` script from the root directory:
+
 ```powershell
+# Make sure your virtual environment is activated first:
+.\venv\Scripts\activate
+
+# Start the application
 python start.py
 ```
-* **Frontend**: `http://localhost:5173`
-* **API Documentation**: `http://localhost:8000/docs`
-* **Access**: `admin` / `admin123`
+
+**Accessing the Application:**
+* **Frontend UI**: [http://localhost:5173](http://localhost:5173)
+* **Backend API Documentation**: [http://localhost:8000/docs](http://localhost:8000/docs)
+* **Default Credentials**: `admin` / `admin123`
 
 ---
 

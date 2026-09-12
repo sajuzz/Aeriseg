@@ -29,7 +29,7 @@ const DashboardViewer = ({ dashboard, onClose, onRefresh }) => {
         {widgets.map(widget => (
           <div 
             key={widget.id}
-            className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden"
+            className="bg-siem-panel border border-gray-200 rounded-2xl shadow-sm overflow-hidden"
             style={{
               gridColumn: `span ${widget.width || 4}`,
               gridRow: `span ${widget.height || 3}`

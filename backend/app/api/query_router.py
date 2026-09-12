@@ -9,7 +9,7 @@ router = APIRouter()
 @router.post("/query", response_model=ThreatHuntResponse)
 async def execute_threat_hunt(query: ThreatHuntQuery):
     try:
-        response = threat_hunt_service.execute_query(query)
+        response = await threat_hunt_service.execute_query(query)
         return response
     except Exception as e:
         log.error("threat_hunt_error", error=str(e))

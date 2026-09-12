@@ -12,8 +12,7 @@ log = structlog.get_logger()
 
 MOCK_EVENTS = [
     {"source_ip": "10.0.0.52", "message": "Normal web traffic to external host"},
-    {"source_ip": "192.168.1.100", "message": "Failed SSH login attempt"},
-    {"source_ip": "192.168.1.100", "message": "Multiple failed SSH logins detected"},
+    {"source_ip": "192.168.1.100", "message": "Failed SSH login attempt", "event_type": "failed_auth", "rule_id": "MS-002"},
     {"source_ip": "10.0.5.10", "message": "Unexpected SMB Traffic cross-vlan"},
     {"source_ip": "10.0.0.88", "message": "Suspicious PowerShell download executed"},
     {"source_ip": "10.20.5.5", "message": "Routine health check from monitoring system"},

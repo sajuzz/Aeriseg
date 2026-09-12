@@ -110,6 +110,11 @@ async def get_summary_stats(
 
         # ── Assets ────────────────────────────────────────────────────────────
         assets_total = conn.execute("SELECT COUNT(*) FROM assets").fetchone()[0]
+        
+        # ── Telemetry totals ────────────────────────────────────────────────────
+        total_events = conn.execute("SELECT COUNT(*) FROM telemetry").fetchone()[0]
+        events_today = conn.execute("SELECT COUNT(*) FROM telemetry WHERE timestamp > datetime('now', '-24 hours')").fetchone()[0]
+        alerts_today = conn.execute("SELECT COUNT(*) FROM alerts WHERE last_seen > datetime('now', '-24 hours')").fetchone()[0]
 
         # ── MITRE Tactic Breakdown ────────────────────────────────────────────
         mitre_rows = conn.execute(f"""
@@ -161,6 +166,7 @@ async def get_summary_stats(
                 "alerts": {
                     "open":      alerts_open,
                     "critical":  alerts_critical,
+                    "alerts_today": alerts_today,
                     "breakdown": severity_breakdown,
                 },
                 "investigations": {
@@ -170,6 +176,8 @@ async def get_summary_stats(
                     "total": assets_total,
                 },
                 "performance": {
+                    "total_events": total_events,
+                    "events_today": events_today,
                     "eps":         eps,
                     "ips":         round(eps * 1.05, 2),   # IPS ≈ EPS + small overhead
                     "eps_history": eps_history,

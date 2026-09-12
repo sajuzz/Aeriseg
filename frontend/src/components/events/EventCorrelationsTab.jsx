@@ -25,14 +25,14 @@ export default function EventCorrelationsTab({ eventId, onOpenEvent }) {
     return (
       <div className="p-8 text-center animate-pulse">
         <Sparkles className="w-6 h-6 text-blue-400 mx-auto mb-2 animate-bounce" />
-        <p className="text-xs text-slate-400 font-medium">Scoring correlations...</p>
+        <p className="text-xs text-siem-muted font-medium">Scoring correlations...</p>
       </div>
     );
   }
 
   if (correlations.length === 0) {
     return (
-      <div className="p-10 text-center text-slate-400">
+      <div className="p-10 text-center text-siem-muted">
         <Info className="w-8 h-8 opacity-20 mx-auto mb-3" />
         <p className="text-xs italic">No significant correlations found for this event.</p>
       </div>
@@ -55,7 +55,7 @@ export default function EventCorrelationsTab({ eventId, onOpenEvent }) {
         <div 
           key={corr.event_id}
           onClick={() => onOpenEvent(corr)}
-          className="group p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-400 hover:shadow-md transition-all cursor-pointer relative overflow-hidden"
+          className="group p-4 bg-siem-panel border border-siem-border rounded-xl hover:border-blue-400 hover:shadow-md transition-all cursor-pointer relative overflow-hidden"
         >
           {/* Score Indicator */}
           <div className="absolute top-0 right-0 p-2">
@@ -65,9 +65,9 @@ export default function EventCorrelationsTab({ eventId, onOpenEvent }) {
           </div>
 
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{corr.source}</span>
+            <span className="text-[10px] font-bold text-siem-muted uppercase tracking-widest">{corr.source}</span>
             <span className="text-slate-200">•</span>
-            <span className="text-[10px] font-medium text-slate-500">{new Date(corr.timestamp).toLocaleTimeString()}</span>
+            <span className="text-[10px] font-medium text-siem-muted">{new Date(corr.timestamp).toLocaleTimeString()}</span>
           </div>
 
           <div className="text-xs font-bold text-slate-800 mb-2 group-hover:text-blue-600 transition-colors">
@@ -76,7 +76,7 @@ export default function EventCorrelationsTab({ eventId, onOpenEvent }) {
 
           <div className="flex flex-wrap gap-1.5 mb-3">
             {corr.reasons.map(reason => (
-              <span key={reason} className="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-bold uppercase border border-slate-200/50">
+              <span key={reason} className="text-[9px] bg-slate-100 text-siem-muted px-1.5 py-0.5 rounded font-bold uppercase border border-siem-border/50">
                 {reason.replace(/_/g, ' ')}
               </span>
             ))}

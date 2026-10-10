@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Monitor, Download, ShieldCheck, Activity, Search, Server, MoreVertical } from 'lucide-react';
+import { Monitor, Download, ShieldCheck, Activity, Search, Server, MoreVertical, Zap } from 'lucide-react';
 import StatusBadge from '../components/StatusBadge';
 import AgentDeploymentModal from '../components/AgentDeploymentModal';
 import AgentDetailPanel from '../components/AgentDetailPanel';
 
 export default function Agents() {
   const [agents, setAgents] = useState([]);
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [showDeployModal, setShowDeployModal] = useState(false);
   const [selectedAgentId, setSelectedAgentId] = useState(null);
 
   const fetchAgents = async () => {
-    setLoading(true);
     try {
       const res = await axios.get('/api/agents');
       setAgents(res.data.data || []);
@@ -24,9 +24,22 @@ export default function Agents() {
     }
   };
 
+  const fetchStats = async () => {
+    try {
+      const res = await axios.get('/api/stats/summary');
+      setStats(res.data.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     fetchAgents();
-    const id = setInterval(fetchAgents, 10000);
+    fetchStats();
+    const id = setInterval(() => {
+      fetchAgents();
+      fetchStats();
+    }, 5000);
     return () => clearInterval(id);
   }, []);
 
@@ -34,6 +47,13 @@ export default function Agents() {
     a.hostname?.toLowerCase().includes(search.toLowerCase()) || 
     a.ip_address?.includes(search)
   );
+
+  const onlineCount = agents.filter(a => a.status === 'ONLINE').length;
+  const fleetHealthPercent = agents.length > 0 ? `${Math.round((onlineCount / agents.length) * 100)}%` : '0%';
+  const realEventCount = stats?.performance?.events_today != null 
+    ? stats.performance.events_today.toLocaleString() 
+    : (stats?.performance?.total_events != null ? stats.performance.total_events.toLocaleString() : '0');
+  const realEps = stats?.performance?.eps?.toFixed(1) || '0.0';
 
   return (
     <div className="space-y-6">
@@ -58,7 +78,7 @@ export default function Agents() {
       <AgentDeploymentModal 
         isOpen={showDeployModal} 
         onClose={() => setShowDeployModal(false)} 
-        onDeployed={fetchAgents} 
+        onDeployed={() => { fetchAgents(); fetchStats(); }} 
       />
 
       <AgentDetailPanel 
@@ -66,10 +86,31 @@ export default function Agents() {
         onClose={() => setSelectedAgentId(null)} 
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <AgentStatCard title="Active Endpoints" value={agents.filter(a => a.status === 'ONLINE').length} total={agents.length} icon={<Monitor className="text-emerald-500" />} />
-        <AgentStatCard title="Healthy Fleet" value="100%" subtitle="No agent errors detected" icon={<ShieldCheck className="text-blue-500" />} />
-        <AgentStatCard title="Last 24h Events" value="1.2k" subtitle="Telemetry ingestion active" icon={<Activity className="text-indigo-500" />} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <AgentStatCard 
+          title="Active Endpoints" 
+          value={onlineCount} 
+          total={agents.length} 
+          icon={<Monitor className="text-emerald-500" />} 
+        />
+        <AgentStatCard 
+          title="Healthy Fleet" 
+          value={fleetHealthPercent} 
+          subtitle="Real-time heartbeat verified" 
+          icon={<ShieldCheck className="text-blue-500" />} 
+        />
+        <AgentStatCard 
+          title="Last 24h Events" 
+          value={realEventCount} 
+          subtitle="Live telemetry ingested" 
+          icon={<Activity className="text-indigo-500" />} 
+        />
+        <AgentStatCard 
+          title="Ingestion Rate" 
+          value={`${realEps} EPS`} 
+          subtitle="Real-time events per second" 
+          icon={<Zap className="text-amber-500" />} 
+        />
       </div>
 
       <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl shadow-sm overflow-hidden flex flex-col min-h-[500px]">

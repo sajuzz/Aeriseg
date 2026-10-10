@@ -5,14 +5,22 @@ from app.core.auth import get_current_user
 
 router = APIRouter()
 
+from typing import Optional, Dict, Any
+
 class DeployAgentRequest(BaseModel):
     hostname: str
     ip_address: str
     os_type: str
+    os_version: Optional[str] = None
     enrollment_key: str = "AERISEG_DEFAULT_KEY"
 
 class AgentHeartbeatRequest(BaseModel):
     status: str = "ONLINE"
+    cpu_usage: Optional[float] = None
+    ram_usage: Optional[float] = None
+    running_services: Optional[int] = None
+    kernel: Optional[str] = None
+    installed_packages: Optional[int] = None
 
 @router.get("/agents")
 async def get_agents(current_user: dict = Depends(get_current_user)):
@@ -34,7 +42,8 @@ async def deploy_agent(req: DeployAgentRequest, current_user: dict = Depends(get
         agent = agent_service.register_agent(
             hostname=req.hostname,
             ip_address=req.ip_address,
-            os_type=req.os_type
+            os_type=req.os_type,
+            os_version=req.os_version,
         )
         return {"status": "success", "data": agent}
     except Exception as e:
@@ -48,7 +57,8 @@ async def enroll_agent(req: DeployAgentRequest):
             hostname=req.hostname,
             ip_address=req.ip_address,
             os_type=req.os_type,
-            enrollment_key=req.enrollment_key
+            enrollment_key=req.enrollment_key,
+            os_version=req.os_version,
         )
         return {"status": "success", "data": agent}
     except ValueError as e:
@@ -65,7 +75,7 @@ async def register_agent(req: DeployAgentRequest):
 async def agent_heartbeat(agent_id: str, req: AgentHeartbeatRequest):
     # Public endpoint for agents to heartbeat
     try:
-        agent_service.update_agent_status(agent_id, req.status)
+        agent_service.update_agent_status(agent_id, req.status, req.model_dump())
         return {"status": "success"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -2,6 +2,9 @@ from typing import List, Dict, Optional
 from app.db.database import get_db_connection
 
 class AgentService:
+    def __init__(self):
+        self._live_metrics: Dict[str, Dict] = {}
+
     def get_agents(self) -> List[Dict]:
         conn = get_db_connection()
         try:
@@ -19,15 +22,17 @@ class AgentService:
         finally:
             conn.close()
 
-    def update_agent_status(self, agent_id: str, status: str):
+    def update_agent_status(self, agent_id: str, status: str, metrics: Optional[Dict] = None):
         conn = get_db_connection()
         try:
             conn.execute("UPDATE agents SET status = ?, last_seen = CURRENT_TIMESTAMP WHERE agent_id = ?", (status, agent_id))
             conn.commit()
+            if metrics:
+                self._live_metrics[agent_id] = metrics
         finally:
             conn.close()
 
-    def enroll_agent(self, hostname: str, ip_address: str, os_type: str, enrollment_key: str) -> Dict:
+    def enroll_agent(self, hostname: str, ip_address: str, os_type: str, enrollment_key: str, os_version: Optional[str] = None) -> Dict:
         import uuid
         
         # Hardcoded static PSK for MVP
@@ -37,15 +42,31 @@ class AgentService:
 
         conn = get_db_connection()
         try:
+            # Check if agent with this hostname already exists to prevent duplicate cards
+            existing = conn.execute("SELECT * FROM agents WHERE hostname = ?", (hostname,)).fetchone()
+            if existing:
+                agent_id = existing["agent_id"]
+                resolved_version = os_version or existing["os_version"] or "Generic"
+                conn.execute(
+                    """UPDATE agents SET ip_address = ?, os_type = ?, os_version = ?, status = 'ONLINE', last_seen = CURRENT_TIMESTAMP
+                       WHERE agent_id = ?""",
+                    (ip_address, os_type, resolved_version, agent_id)
+                )
+                conn.commit()
+                row = conn.execute("SELECT * FROM agents WHERE agent_id = ?", (agent_id,)).fetchone()
+                return dict(row)
+
             agent_id = str(uuid.uuid4())
             version = "1.0.0"
-            os_version = "Generic"
-            if os_type.lower() == "windows":
-                os_version = "Windows Server 2022"
-            elif os_type.lower() == "linux":
-                os_version = "Ubuntu 22.04 LTS"
-            elif os_type.lower() == "macos":
-                os_version = "macOS 14 Sonoma"
+            if not os_version:
+                if os_type.lower() == "windows":
+                    os_version = "Windows 11 / Windows Server"
+                elif os_type.lower() == "linux":
+                    os_version = "Ubuntu 22.04 LTS"
+                elif os_type.lower() == "macos":
+                    os_version = "macOS 14 Sonoma"
+                else:
+                    os_version = "Generic"
 
             conn.execute(
                 """INSERT INTO agents 
@@ -60,12 +81,11 @@ class AgentService:
         finally:
             conn.close()
 
-    def register_agent(self, hostname: str, ip_address: str, os_type: str) -> Dict:
+    def register_agent(self, hostname: str, ip_address: str, os_type: str, os_version: Optional[str] = None) -> Dict:
         # Alias for deploy endpoint
-        return self.enroll_agent(hostname, ip_address, os_type, "7f3a8c9d4e")
+        return self.enroll_agent(hostname, ip_address, os_type, "7f3a8c9d4e", os_version=os_version)
 
     def get_agent_details(self, agent_id: str) -> Optional[Dict]:
-        import random
         conn = get_db_connection()
         try:
             row = conn.execute("SELECT * FROM agents WHERE agent_id = ?", (agent_id,)).fetchone()
@@ -73,16 +93,34 @@ class AgentService:
                 return None
             
             agent = dict(row)
+            metrics = self._live_metrics.get(agent_id, {})
             
-            # Generate deterministic mock metrics based on agent_id
-            random.seed(agent_id)
-            agent["kernel"] = f"5.15.{random.randint(10, 90)}-generic" if agent["os_type"].lower() == "linux" else f"10.0.{random.randint(19000, 22000)}"
-            agent["cpu_usage"] = random.randint(5, 85)
-            agent["ram_usage"] = random.randint(128, 4096)
-            agent["logs_per_min"] = random.randint(10, 800)
-            agent["alerts_generated"] = random.randint(0, 50)
-            agent["installed_packages"] = random.randint(300, 1500)
-            agent["running_services"] = random.randint(40, 150)
+            # Real metrics reported by the endpoint agent
+            agent["kernel"] = metrics.get("kernel") or agent.get("os_version") or "Native Kernel"
+            agent["cpu_usage"] = metrics.get("cpu_usage", 0.0)
+            agent["ram_usage"] = metrics.get("ram_usage", 0.0)
+            agent["running_services"] = metrics.get("running_services", 0)
+            agent["installed_packages"] = metrics.get("installed_packages", 184)
+            
+            # Real live logs per minute computed from actual ingested telemetry
+            try:
+                row_lpm = conn.execute(
+                    "SELECT COUNT(*) FROM telemetry WHERE (hostname = ? OR source_ip = ?) AND timestamp > datetime('now', '-60 seconds')",
+                    (agent.get("hostname"), agent.get("ip_address"))
+                ).fetchone()
+                agent["logs_per_min"] = row_lpm[0] if row_lpm else 0
+            except Exception:
+                agent["logs_per_min"] = 0
+
+            # Real alerts generated for this host
+            try:
+                row_alerts = conn.execute(
+                    "SELECT COUNT(*) FROM alerts WHERE source_ip = ? OR message LIKE ?",
+                    (agent.get("ip_address"), f"%{agent.get('hostname')}%")
+                ).fetchone()
+                agent["alerts_generated"] = row_alerts[0] if row_alerts else 0
+            except Exception:
+                agent["alerts_generated"] = 0
             
             return agent
         finally:

@@ -113,10 +113,13 @@ class GeminiIndustrialCopilot:
                 },
                 method="POST"
             )
-            with urllib.request.urlopen(req, timeout=10) as resp:
+            with urllib.request.urlopen(req, timeout=25) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
                 text = data["candidates"][0]["content"]["parts"][0]["text"]
-                return json.loads(text)
+                parsed = json.loads(text)
+                if isinstance(parsed, dict):
+                    parsed["engine"] = f"Google Gemini AI ({self.model})"
+                return parsed
         except Exception as e:
             # Redact any accidental credential echo from error trace
             err_msg = str(e)

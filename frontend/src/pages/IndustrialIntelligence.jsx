@@ -368,17 +368,17 @@ export default function IndustrialIntelligence() {
                     <div className="space-y-3 text-sm">
                       <div>
                         <span className="text-xs font-semibold text-[var(--text-muted)] uppercase block">Executive Summary</span>
-                        <p className="text-gray-200 mt-0.5">{explanation.ai_operational_assessment.executive_summary}</p>
+                        <p className="text-[var(--text)] mt-0.5">{explanation.ai_operational_assessment.executive_summary}</p>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
                         <div className="p-3 rounded-lg bg-[var(--surface-hover)] border border-[var(--border)]">
-                          <span className="text-xs font-semibold text-amber-400 uppercase block">Plant Floor Risk Assessment</span>
-                          <p className="text-xs text-gray-300 mt-1">{explanation.ai_operational_assessment.operational_risk_assessment}</p>
+                          <span className="text-xs font-semibold text-amber-500 dark:text-amber-400 uppercase block">Plant Floor Risk Assessment</span>
+                          <p className="text-xs text-[var(--text)] mt-1">{explanation.ai_operational_assessment.operational_risk_assessment}</p>
                         </div>
                         <div className="p-3 rounded-lg bg-[var(--surface-hover)] border border-[var(--border)]">
-                          <span className="text-xs font-semibold text-cyan-400 uppercase block">OT Controls Briefing</span>
-                          <p className="text-xs text-gray-300 mt-1">{explanation.ai_operational_assessment.ot_engineer_briefing}</p>
+                          <span className="text-xs font-semibold text-cyan-600 dark:text-cyan-400 uppercase block">OT Controls Briefing</span>
+                          <p className="text-xs text-[var(--text)] mt-1">{explanation.ai_operational_assessment.ot_engineer_briefing}</p>
                         </div>
                       </div>
                     </div>
@@ -389,14 +389,14 @@ export default function IndustrialIntelligence() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Facts Observed */}
                   <div className="bg-[var(--surface)] p-4 rounded-xl border border-[var(--border)]">
-                    <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase mb-3">
+                    <div className="flex items-center gap-2 text-emerald-500 dark:text-emerald-400 font-bold text-xs uppercase mb-3">
                       <ShieldCheck className="w-4 h-4" />
                       <span>Factual Telemetry & Asset Records</span>
                     </div>
-                    <ul className="space-y-2 text-xs text-gray-300">
+                    <ul className="space-y-2 text-xs text-[var(--text)]">
                       {explanation?.facts_observed?.map((fact, idx) => (
                         <li key={idx} className="flex items-start gap-2">
-                          <span className="text-emerald-400 font-bold">•</span>
+                          <span className="text-emerald-500 dark:text-emerald-400 font-bold">•</span>
                           <span>{fact}</span>
                         </li>
                       ))}
@@ -405,14 +405,14 @@ export default function IndustrialIntelligence() {
 
                   {/* Hypotheses & Uncertainties */}
                   <div className="bg-[var(--surface)] p-4 rounded-xl border border-[var(--border)]">
-                    <div className="flex items-center gap-2 text-amber-400 font-bold text-xs uppercase mb-3">
+                    <div className="flex items-center gap-2 text-amber-500 dark:text-amber-400 font-bold text-xs uppercase mb-3">
                       <AlertTriangle className="w-4 h-4" />
                       <span>Hypotheses & Missing Context</span>
                     </div>
-                    <ul className="space-y-2 text-xs text-gray-300">
+                    <ul className="space-y-2 text-xs text-[var(--text)]">
                       {explanation?.hypotheses_and_possibilities?.map((hyp, idx) => (
                         <li key={idx} className="flex items-start gap-2">
-                          <span className="text-amber-400 font-bold">•</span>
+                          <span className="text-amber-500 dark:text-amber-400 font-bold">•</span>
                           <span>{hyp}</span>
                         </li>
                       ))}
@@ -471,19 +471,19 @@ export default function IndustrialIntelligence() {
                         <div className="flex items-start justify-between gap-4">
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="font-bold text-sm text-gray-200">{rec.title}</span>
+                              <span className="font-bold text-sm text-[var(--text)]">{rec.title}</span>
                               {rec.is_disruptive ? (
-                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-400 border border-red-500/40">
+                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-500 dark:text-red-400 border border-red-500/40">
                                   DISRUPTIVE ACTION
                                 </span>
                               ) : (
-                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/40">
                                   NON-DISRUPTIVE TRIAGE
                                 </span>
                               )}
                             </div>
                             <p className="text-xs text-[var(--text-muted)] mt-1">{rec.description}</p>
-                            <span className="text-[11px] text-amber-400/90 block mt-1 italic">
+                            <span className="text-[11px] text-amber-600 dark:text-amber-400 block mt-1 italic font-medium">
                               Safety Rationale: {rec.safety_rationale}
                             </span>
                           </div>
@@ -578,13 +578,13 @@ export default function IndustrialIntelligence() {
                 {filteredAssets.map((asset) => (
                   <tr key={asset.asset_id} className="hover:bg-[var(--surface-hover)] transition-colors">
                     <td className="p-3">
-                      <span className="font-mono font-bold text-cyan-400 block">{asset.asset_id}</span>
-                      <span className="font-semibold text-gray-200">{asset.name}</span>
+                      <span className="font-mono font-bold text-cyan-600 dark:text-cyan-400 block">{asset.asset_id}</span>
+                      <span className="font-semibold text-[var(--text)]">{asset.name}</span>
                     </td>
                     <td className="p-3">{getPurdueBadge(asset.purdue_level)}</td>
                     <td className="p-3 font-mono text-[var(--text-muted)]">{asset.ip_address}</td>
                     <td className="p-3">
-                      <span className="text-gray-300 block">{asset.production_zone}</span>
+                      <span className="text-[var(--text)] block font-medium">{asset.production_zone}</span>
                       <span className="text-[10px] text-[var(--text-muted)] font-mono">{asset.network_segment}</span>
                     </td>
                     <td className="p-3">{getCriticalityBadge(asset.criticality)}</td>

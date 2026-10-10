@@ -28,21 +28,50 @@ from app.industrial_intelligence.asset_registry import asset_registry
 log = structlog.get_logger()
 
 
+from app.core.config import settings
+
 class GeminiIndustrialCopilot:
     """
     Focused Google Gemini client for industrial incident synthesis.
     Works with Google AI Studio free tier via standard HTTPS REST request.
-    Requires no paid services or extra heavy SDKs.
+    Security Architecture:
+    - Transmits credentials via encrypted 'x-goog-api-key' HTTP header (never in URL query string)
+    - Automatically redacts API keys from all error logs and diagnostic traces
+    - Reads from protected .env via Pydantic settings
     """
 
-    def __init__(self):
-        self.api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
-        self.model = os.environ.get("GEMINI_MODEL", "gemini-1.5-flash")
+    def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
+        self.api_key = (
+            api_key
+            or getattr(settings, "GEMINI_API_KEY", "")
+            or os.environ.get("GEMINI_API_KEY")
+            or os.environ.get("GOOGLE_API_KEY")
+            or ""
+        ).strip()
+        self.model = (
+            model
+            or getattr(settings, "GEMINI_MODEL", "")
+            or os.environ.get("GEMINI_MODEL")
+            or "gemini-flash-latest"
+        ).strip()
 
     def is_available(self) -> bool:
-        return bool(self.api_key and len(self.api_key.strip()) > 5)
+        return bool(self.api_key and len(self.api_key) > 5)
 
-    def analyze_incident(self, incident_data: Dict[str, Any], facts: List[str], hypotheses: List[str]) -> Optional[Dict[str, Any]]:
+    def get_masked_key(self) -> str:
+        """Returns safe masked key for audit/diagnostics without exposing secret."""
+        if not self.is_available():
+            return "NOT_CONFIGURED"
+        if len(self.api_key) <= 8:
+            return "********"
+        return f"{self.api_key[:4]}...{self.api_key[-4:]}"
+
+    def analyze_incident(
+        self,
+        incident_data: Dict[str, Any],
+        facts: Optional[List[str]] = None,
+        hypotheses: Optional[List[str]] = None
+    ) -> Optional[Dict[str, Any]]:
         """
         Calls Google Gemini to provide structured operational impact insights.
         Returns None if API key is not configured or network request fails.
@@ -50,7 +79,11 @@ class GeminiIndustrialCopilot:
         if not self.is_available():
             return None
 
-        endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent?key={self.api_key.strip()}"
+        facts = facts or []
+        hypotheses = hypotheses or []
+
+        # Secure: Endpoint contains NO API key query parameter
+        endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent"
         prompt = (
             "You are an expert Industrial Cybersecurity & Operational Continuity Copilot. "
             "Analyze the following correlated industrial incident evidence strictly based on observed facts. "
@@ -74,7 +107,10 @@ class GeminiIndustrialCopilot:
             req = urllib.request.Request(
                 endpoint,
                 data=json.dumps(payload).encode("utf-8"),
-                headers={"Content-Type": "application/json"},
+                headers={
+                    "Content-Type": "application/json",
+                    "x-goog-api-key": self.api_key,  # Sent via encrypted HTTP header
+                },
                 method="POST"
             )
             with urllib.request.urlopen(req, timeout=10) as resp:
@@ -82,7 +118,11 @@ class GeminiIndustrialCopilot:
                 text = data["candidates"][0]["content"]["parts"][0]["text"]
                 return json.loads(text)
         except Exception as e:
-            log.warning("gemini_copilot.call_failed", error=str(e))
+            # Redact any accidental credential echo from error trace
+            err_msg = str(e)
+            if self.api_key:
+                err_msg = err_msg.replace(self.api_key, "[REDACTED_GEMINI_KEY]")
+            log.warning("gemini_copilot.call_failed", error=err_msg, model=self.model)
             return None
 
 

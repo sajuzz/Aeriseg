@@ -1,17 +1,39 @@
- HEAD
-*.log
+# Environment and Secrets (CRITICAL SECURITY: Never commit credentials)
 .env
-*.db
-__pycache__/
+.env.*
+*.env
+!.env.example
 *.pem
 *.key
+*.cert
+*.crt
+secrets/
 
-.venv/
-*.pyc
-*.pyo
+# Python Cache & Bytecode
 __pycache__/
-*.log
-.env
-.idea/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Virtual Environments
+venv/
+.venv/
+env/
+
+# IDE & Editor Settings
 .vscode/
- 708c0e442ee7b491d94cae035a285ac29df1e45a
+.idea/
+*.swp
+*.swo
+
+# Node / Frontend Build Outputs
+frontend/node_modules/
+frontend/dist/
+dist/
+
+# Local Databases & Logs
+*.log
+logs/
+*.db
+aeriseg.db
+medishield.db

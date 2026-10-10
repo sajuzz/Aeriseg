@@ -37,7 +37,12 @@ class Settings(BaseSettings):
     CLOUDFLARE_EMAIL: str = ""
     CLOUDFLARE_ZONE_ID: str = ""
 
+    # Google Gemini AI Copilot (AI Builder Cup 2026)
+    GEMINI_API_KEY: str = ""
+    GEMINI_MODEL: str = "gemini-flash-latest"
+
     class Config:
-        env_file = ".env"
+        env_file = (".env", "../.env")
+        extra = "ignore"
 
 settings = Settings()

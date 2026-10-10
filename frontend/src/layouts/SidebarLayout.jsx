@@ -3,7 +3,7 @@ import {
   Shield, Search, List, Activity, LayoutDashboard, FileText,
   Settings, HelpCircle, Server, Database, PieChart, LogOut,
   Code, Monitor, Users, ChevronRight, Moon, Sun, Palette, Bell,
-  PanelLeftClose, PanelLeftOpen, CheckCircle2, RefreshCw, Hexagon, Box
+  PanelLeftClose, PanelLeftOpen, CheckCircle2, RefreshCw, Hexagon, Box, Cpu
 } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../stores/useAuthStore'
@@ -52,6 +52,7 @@ export default function SidebarLayout({ children }) {
     '/rules/new':      'Sigma Rule Builder',
     '/simulator':      'Detection Lab',
     '/settings':       'Grid Settings',
+    '/industrial':     'Industrial Security Intelligence',
   }
   const currentPage = breadcrumbMap[location.pathname] || 'AeriSeg'
 
@@ -95,6 +96,7 @@ export default function SidebarLayout({ children }) {
           </NavSection>
 
           <NavSection title="Operations" isCollapsed={isCollapsed}>
+            <NavLink to="/industrial" icon={Cpu} active={location.pathname === '/industrial'} isCollapsed={isCollapsed}>Industrial Intel</NavLink>
             <NavLink to="/hunt" icon={Search} active={location.pathname === '/hunt'} isCollapsed={isCollapsed}>Threat Hunt</NavLink>
             <NavLink to="/alerts" icon={List} active={location.pathname === '/alerts'} isCollapsed={isCollapsed} badge={alerts?.filter(a=>a.status==='NEW').length || 0}>Alerts</NavLink>
             <NavLink to="/investigations" icon={Activity} active={location.pathname.startsWith('/investigations')} isCollapsed={isCollapsed}>Investigations</NavLink>

@@ -93,6 +93,7 @@ from app.api import query_router, ingest_router, investigation_router, asset_rou
 from app.identity import router as identity_router
 from app.alerts import router as alerts_router
 from app.incidents import router as incident_router
+from app.industrial_intelligence import router as industrial_router
 
 
 from app.mock.event_generator import telemetry_loop
@@ -129,6 +130,7 @@ app.include_router(simulator_router.router, prefix="/api", tags=["Simulator"])
 app.include_router(config_router.router, prefix="/api", tags=["Configuration"])
 app.include_router(incident_router.router, prefix="/api", tags=["Incidents"])
 app.include_router(playbook_router.router, prefix="/api", tags=["Playbooks"])
+app.include_router(industrial_router.router, prefix="/api")
 app.include_router(ws_server.router)
 
 

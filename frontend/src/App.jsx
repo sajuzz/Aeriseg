@@ -22,6 +22,7 @@ import Login from './pages/Login'
 import DataSources from './pages/DataSources'
 import AttackTimeline from './pages/AttackTimeline'
 import PlaybookDesigner from './pages/PlaybookDesigner'
+import IndustrialIntelligence from './pages/IndustrialIntelligence'
 
 import SidebarLayout from './layouts/SidebarLayout'
 import { useAuthStore } from './stores/useAuthStore'
@@ -97,6 +98,8 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/timeline" element={<AttackTimeline />} />
           <Route path="/playbooks/designer" element={<PlaybookDesigner />} />
+          <Route path="/industrial" element={<IndustrialIntelligence />} />
+          <Route path="/industrial-intelligence" element={<IndustrialIntelligence />} />
         </Route>
       </Routes>
     </Router>

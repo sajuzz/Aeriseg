@@ -8,7 +8,7 @@ def main():
 
     
     # Setup paths
-    venv_python = os.path.join("venv", "Scripts", "python.exe")
+    venv_python = os.path.abspath(os.path.join("venv", "Scripts", "python.exe"))
     if not os.path.exists(venv_python):
         print(f"Error: {venv_python} not found. Please ensure venv is setup.")
         sys.exit(1)

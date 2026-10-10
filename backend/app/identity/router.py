@@ -3,34 +3,33 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-from app.core.security import create_access_token, verify_password, get_password_hash
+from app.core.auth import create_access_token, verify_password, get_password_hash
 from app.core.dependencies import get_current_user
 from app.database.session import get_db
-from app.identity.models import User, UserRole
-from app.tenants.models import Tenant
+from app.identity.models import User
 
 router = APIRouter()
 
 @router.post("/auth/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(User).where(User.email == form_data.username))
+    result = await db.execute(select(User).where(User.username == form_data.username))
     user = result.scalar_one_or_none()
     
-    if not user or not verify_password(form_data.password, user.hashed_password):
+    if not user or not verify_password(form_data.password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    access_token = create_access_token(data={"sub": user.email})
+    access_token = create_access_token(data={"sub": user.username})
     return {
         "access_token": access_token, 
         "token_type": "bearer", 
         "user": {
-            "username": user.email,
-            "role": user.role.value if user.role else "VIEWER",
-            "full_name": user.name
+            "username": user.username,
+            "role": user.role or "ANALYST",
+            "full_name": user.full_name or user.username
         }
     }
 
@@ -40,7 +39,7 @@ async def read_users_me(current_user: dict = Depends(get_current_user)):
 
 @router.get("/users")
 async def get_users(current_user: dict = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-    if current_user["role"] != "ADMIN":
+    if current_user.get("role") != "ADMIN":
         raise HTTPException(status_code=403, detail="Forbidden")
     
     result = await db.execute(select(User))
@@ -51,9 +50,9 @@ async def get_users(current_user: dict = Depends(get_current_user), db: AsyncSes
         "data": [
             {
                 "id": u.id, 
-                "username": u.email, 
-                "full_name": u.name, 
-                "role": u.role.value if u.role else "VIEWER", 
+                "username": u.username, 
+                "full_name": u.full_name, 
+                "role": u.role or "ANALYST", 
                 "created_at": u.created_at
             } for u in users
         ]
@@ -68,39 +67,16 @@ async def create_user(
     current_user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    if current_user["role"] != "ADMIN":
+    if current_user.get("role") != "ADMIN":
         raise HTTPException(status_code=403, detail="Forbidden")
     
     try:
-        # Fallback logic for tenant (assign to the creator's tenant)
-        tenant_id = current_user.get("tenant_id", 1)
-        
-        # Ensure tenant exists or this will fail FK constraint
-        result = await db.execute(select(Tenant).where(Tenant.id == tenant_id))
-        tenant = result.scalar_one_or_none()
-        
-        if not tenant:
-            # Fallback to create a dummy tenant
-            from app.tenants.models import Organization
-            org_result = await db.execute(select(Organization).limit(1))
-            org = org_result.scalar_one_or_none()
-            if not org:
-                org = Organization(name="Default Org")
-                db.add(org)
-                await db.flush()
-            
-            tenant = Tenant(name="Default Tenant", organization_id=org.id)
-            db.add(tenant)
-            await db.flush()
-            tenant_id = tenant.id
-
-        password_hash = get_password_hash(password)
+        pw_hash = get_password_hash(password)
         new_user = User(
-            name=full_name,
-            email=username,
-            hashed_password=password_hash,
-            role=UserRole(role.lower()) if hasattr(UserRole, role.upper()) else UserRole.VIEWER,
-            tenant_id=tenant_id
+            username=username,
+            password_hash=pw_hash,
+            full_name=full_name,
+            role=role.upper()
         )
         db.add(new_user)
         await db.commit()
@@ -111,7 +87,7 @@ async def create_user(
 
 @router.delete("/users/{user_id}")
 async def delete_user(user_id: int, current_user: dict = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-    if current_user["role"] != "ADMIN":
+    if current_user.get("role") != "ADMIN":
         raise HTTPException(status_code=403, detail="Forbidden")
     
     result = await db.execute(select(User).where(User.id == user_id))

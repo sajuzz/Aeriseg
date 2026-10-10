@@ -1,28 +1,24 @@
-from sqlalchemy import Column, Integer, String, Enum, DateTime, ForeignKey, Boolean
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, DateTime
 from enum import Enum as PyEnum
 from datetime import datetime
 from app.database.base import Base
 
 class UserRole(PyEnum):
-    ADMIN = "admin"
-    SOC_MANAGER = "soc_manager"
-    L2_ANALYST = "l2_analyst"
-    L1_ANALYST = "l1_analyst"
-    THREAT_HUNTER = "threat_hunter"
-    INCIDENT_RESPONDER = "incident_responder"
-    AUDITOR = "auditor"
-    VIEWER = "viewer"
+    ADMIN = "ADMIN"
+    SOC_MANAGER = "SOC_MANAGER"
+    L2_ANALYST = "L2_ANALYST"
+    L1_ANALYST = "L1_ANALYST"
+    THREAT_HUNTER = "THREAT_HUNTER"
+    INCIDENT_RESPONDER = "INCIDENT_RESPONDER"
+    AUDITOR = "AUDITOR"
+    VIEWER = "VIEWER"
+    ANALYST = "ANALYST"
 
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    email = Column(String, nullable=False, unique=True)
-    hashed_password = Column(String, nullable=False)
-    role = Column(Enum(UserRole), nullable=False, default=UserRole.VIEWER)
-    tenant_id = Column(Integer, ForeignKey('tenants.id'), nullable=False)
-    is_active = Column(Boolean, default=True)
+    username = Column(String, nullable=False, unique=True)
+    password_hash = Column(String, nullable=False)
+    role = Column(String, nullable=False, default="ANALYST")
+    full_name = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
-
-    tenant = relationship("Tenant", back_populates="users")

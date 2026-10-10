@@ -89,8 +89,10 @@ async def lifespan(app: FastAPI):
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from app.websocket import server as ws_server
-from app.api import query_router, ingest_router, investigation_router, alert_router, asset_router, dashboard_router, stats_router, rules_router, agent_router, health_router, simulator_router, config_router, incident_router, playbook_router
+from app.api import query_router, ingest_router, investigation_router, asset_router, dashboard_router, stats_router, rules_router, agent_router, health_router, simulator_router, config_router, playbook_router
 from app.identity import router as identity_router
+from app.alerts import router as alerts_router
+from app.incidents import router as incident_router
 
 
 from app.mock.event_generator import telemetry_loop
@@ -115,7 +117,7 @@ app.include_router(routers.router, prefix="/api")
 app.include_router(query_router.router, prefix="/api")
 app.include_router(ingest_router.router, prefix="/api")
 app.include_router(investigation_router.router, prefix="/api")
-app.include_router(alert_router.router, prefix="/api")
+app.include_router(alerts_router.router, prefix="/api")
 app.include_router(asset_router.router, prefix="/api")
 app.include_router(dashboard_router.router, prefix="/api")
 app.include_router(stats_router.router, prefix="/api")

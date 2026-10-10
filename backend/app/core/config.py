@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     TOKEN_EXPIRE_MINUTES: int = 480
 
-    DB_URL: str = "postgresql+asyncpg://aeriseg_user:aeriseg_password@127.0.0.1:5433/aeriseg_db"
+    DB_URL: str = "sqlite+aiosqlite:///c:/Users/SJ/Desktop/projects/siem/aeriseg.db"
     
     ELASTICSEARCH_URL: str = "http://127.0.0.1:9200"
     ELASTICSEARCH_USER: str = "elastic"

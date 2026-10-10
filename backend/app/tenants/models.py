@@ -15,11 +15,10 @@ class Tenant(Base):
     __tablename__ = 'tenants'
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
-    organization_id = Column(Integer, ForeignKey('organizations.id'), nullable=False)
+    organization_id = Column(Integer, ForeignKey('organizations.id'), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     organization = relationship("Organization", back_populates="tenants")
-    users = relationship("User", back_populates="tenant")
     alerts = relationship("Alert", back_populates="tenant")
     incidents = relationship("Incident", back_populates="tenant")
     cases = relationship("Case", back_populates="tenant")

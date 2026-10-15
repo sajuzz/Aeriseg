@@ -84,6 +84,7 @@ export default function Agents() {
       <AgentDetailPanel 
         agentId={selectedAgentId} 
         onClose={() => setSelectedAgentId(null)} 
+        onRefresh={() => { fetchAgents(); fetchStats(); }}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

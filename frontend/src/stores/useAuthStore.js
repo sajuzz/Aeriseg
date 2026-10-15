@@ -2,6 +2,23 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import axios from 'axios'
 
+// Automatically inject auth token into all outgoing axios requests
+axios.interceptors.request.use((config) => {
+  try {
+    const raw = localStorage.getItem('medishield-auth');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      const token = parsed?.state?.token;
+      if (token && !config.headers.Authorization) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+  } catch (e) {
+    // ignore parse error
+  }
+  return config;
+});
+
 export const useAuthStore = create(
   persist(
     (set, get) => ({

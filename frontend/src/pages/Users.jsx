@@ -186,6 +186,7 @@ function ApplicationHealth() {
 export default function UserManagement() {
   const [users, setUsers]       = useState([]);
   const [loading, setLoading]   = useState(true);
+  const [fetchError, setFetchError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     username: '', password: '', full_name: '', role: 'ANALYST',
@@ -193,11 +194,13 @@ export default function UserManagement() {
 
   const fetchUsers = async () => {
     setLoading(true);
+    setFetchError(null);
     try {
       const res = await axios.get('/api/users');
       setUsers(res.data.data || []);
     } catch (err) {
       console.error(err);
+      setFetchError(err.response?.data?.detail || err.message);
     } finally {
       setLoading(false);
     }
@@ -267,6 +270,14 @@ export default function UserManagement() {
                 <tr>
                   <td colSpan="5" className="p-12 text-center text-siem-muted animate-pulse font-medium text-xs uppercase tracking-widest">
                     Synchronizing identities…
+                  </td>
+                </tr>
+              ) : fetchError ? (
+                <tr>
+                  <td colSpan="5" className="p-8 text-center text-amber-500 font-medium text-xs">
+                    {fetchError === 'Forbidden' 
+                      ? 'Access Restricted: Administrator privileges required to inspect user credentials.' 
+                      : `Sync status: ${fetchError}`}
                   </td>
                 </tr>
               ) : users.length === 0 ? (

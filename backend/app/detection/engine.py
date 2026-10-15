@@ -48,6 +48,16 @@ class DetectionEngine:
             if self._is_match(rule, event):
                 await self._handle_match(rule, event)
                 # We continue to check other rules (no break) to allow multi-rule hits
+
+    async def process_batch(self, events: list):
+        """
+        Processes a batch of events sequentially through the engine.
+        """
+        for event in events:
+            try:
+                await self.process_log(event)
+            except Exception as e:
+                log.error("detection_batch_event_failed", error=str(e), event_id=event.get("id"))
     
     def _is_match(self, rule: dict, event: dict) -> bool:
         """Determines if the event matches the rule logic."""

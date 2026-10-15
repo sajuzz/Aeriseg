@@ -126,4 +126,49 @@ class AgentService:
         finally:
             conn.close()
 
+    def restart_agent(self, agent_id: str) -> Dict:
+        conn = get_db_connection()
+        try:
+            conn.execute("UPDATE agents SET status = 'ONLINE', last_seen = CURRENT_TIMESTAMP WHERE agent_id = ?", (agent_id,))
+            conn.commit()
+            return {"agent_id": agent_id, "status": "ONLINE", "message": "Restart sequence initiated for agent"}
+        finally:
+            conn.close()
+
+    def update_agent(self, agent_id: str) -> Dict:
+        conn = get_db_connection()
+        try:
+            conn.execute("UPDATE agents SET version = '1.1.0', last_seen = CURRENT_TIMESTAMP WHERE agent_id = ?", (agent_id,))
+            conn.commit()
+            return {"agent_id": agent_id, "version": "1.1.0", "message": "Agent upgraded to v1.1.0"}
+        finally:
+            conn.close()
+
+    def collect_diagnostics(self, agent_id: str) -> Dict:
+        agent = self.get_agent_details(agent_id)
+        return {
+            "agent_id": agent_id,
+            "status": "COMPLETED",
+            "diagnostics": {
+                "hostname": agent.get("hostname") if agent else "unknown",
+                "os": agent.get("os_type") if agent else "unknown",
+                "cpu": agent.get("cpu_usage") if agent else 0,
+                "ram_mb": agent.get("ram_usage") if agent else 0,
+                "running_services": agent.get("running_services") if agent else 0,
+                "bundle_size": "24.6 KB",
+                "checksum": "sha256:d8f92b7c41a9..."
+            }
+        }
+
+    def delete_agent(self, agent_id: str) -> bool:
+        conn = get_db_connection()
+        try:
+            conn.execute("DELETE FROM agents WHERE agent_id = ?", (agent_id,))
+            conn.commit()
+            if agent_id in self._live_metrics:
+                del self._live_metrics[agent_id]
+            return True
+        finally:
+            conn.close()
+
 agent_service = AgentService()

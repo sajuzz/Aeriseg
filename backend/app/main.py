@@ -89,7 +89,7 @@ async def lifespan(app: FastAPI):
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from app.websocket import server as ws_server
-from app.api import query_router, ingest_router, investigation_router, asset_router, dashboard_router, stats_router, rules_router, agent_router, health_router, simulator_router, config_router, playbook_router
+from app.api import query_router, ingest_router, investigation_router, asset_router, dashboard_router, stats_router, rules_router, agent_router, health_router, simulator_router, config_router, playbook_router, copilot_router
 from app.identity import router as identity_router
 from app.alerts import router as alerts_router
 from app.incidents import router as incident_router
@@ -131,6 +131,7 @@ app.include_router(config_router.router, prefix="/api", tags=["Configuration"])
 app.include_router(incident_router.router, prefix="/api", tags=["Incidents"])
 app.include_router(playbook_router.router, prefix="/api", tags=["Playbooks"])
 app.include_router(industrial_router.router, prefix="/api")
+app.include_router(copilot_router.router, prefix="/api", tags=["AI Copilot"])
 app.include_router(ws_server.router)
 
 

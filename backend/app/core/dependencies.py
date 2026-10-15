@@ -31,18 +31,19 @@ async def get_current_user(
     except JWTError:
         raise credentials_exception
         
-    result = await db.execute(select(User).where(User.email == username))
+    result = await db.execute(select(User).where(User.username == username))
     user = result.scalar_one_or_none()
     
     if user is None:
         raise credentials_exception
         
+    role_val = user.role.value if hasattr(user.role, 'value') else (user.role or "ANALYST")
     return {
         "id": user.id,
-        "username": user.email,
-        "role": user.role.value if user.role else "VIEWER",
-        "full_name": user.name,
-        "tenant_id": user.tenant_id
+        "username": user.username,
+        "role": role_val,
+        "full_name": getattr(user, 'full_name', getattr(user, 'name', user.username)),
+        "tenant_id": getattr(user, 'tenant_id', 1)
     }
 
 def check_admin(user: dict = Depends(get_current_user)):

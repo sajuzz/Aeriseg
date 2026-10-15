@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { 
   Zap, ShieldAlert, Target, Activity, 
-  Terminal, Play, CheckCircle, AlertCircle 
+  Terminal, Play, CheckCircle, AlertCircle, Info 
 } from 'lucide-react';
 
 export default function AttackSimulator() {

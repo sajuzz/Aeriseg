@@ -1,0 +1,6 @@
+id: NEW-RULE
+title: New Detection Rule
+description: Describe rule
+severity: MEDIUM
+enabled: true
+asql_query: source:web "pattern"

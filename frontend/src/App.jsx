@@ -23,6 +23,8 @@ import DataSources from './pages/DataSources'
 import AttackTimeline from './pages/AttackTimeline'
 import PlaybookDesigner from './pages/PlaybookDesigner'
 import IndustrialIntelligence from './pages/IndustrialIntelligence'
+import Integrations from './pages/Integrations'
+import ManufacturingCopilot from './pages/ManufacturingCopilot'
 
 import SidebarLayout from './layouts/SidebarLayout'
 import { useAuthStore } from './stores/useAuthStore'
@@ -92,6 +94,7 @@ function App() {
           <Route path="/documentation" element={<Documentation />} />
           <Route path="/users" element={<UserManagement />} />
           <Route path="/data-sources" element={<DataSources />} />
+          <Route path="/integrations" element={<Integrations />} />
           <Route path="/simulator" element={<AttackSimulator />} />
           <Route path="/investigations" element={<InvestigationQueue />} />
           <Route path="/investigations/:id" element={<InvestigationDetail />} />
@@ -100,6 +103,7 @@ function App() {
           <Route path="/playbooks/designer" element={<PlaybookDesigner />} />
           <Route path="/industrial" element={<IndustrialIntelligence />} />
           <Route path="/industrial-intelligence" element={<IndustrialIntelligence />} />
+          <Route path="/copilot" element={<ManufacturingCopilot />} />
         </Route>
       </Routes>
     </Router>

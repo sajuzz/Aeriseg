@@ -3,7 +3,7 @@ import {
   Shield, Search, List, Activity, LayoutDashboard, FileText,
   Settings, HelpCircle, Server, Database, PieChart, LogOut,
   Code, Monitor, Users, ChevronRight, Moon, Sun, Palette, Bell,
-  PanelLeftClose, PanelLeftOpen, CheckCircle2, RefreshCw, Hexagon, Box, Cpu
+  PanelLeftClose, PanelLeftOpen, CheckCircle2, RefreshCw, Hexagon, Box, Cpu, Bot, Sparkles
 } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../stores/useAuthStore'
@@ -53,6 +53,8 @@ export default function SidebarLayout({ children }) {
     '/simulator':      'Detection Lab',
     '/settings':       'Grid Settings',
     '/industrial':     'Industrial Security Intelligence',
+    '/copilot':        'Manufacturing AI Copilot',
+    '/integrations':   'Google Cloud & Grid Integrations',
   }
   const currentPage = breadcrumbMap[location.pathname] || 'AeriSeg'
 
@@ -71,7 +73,15 @@ export default function SidebarLayout({ children }) {
       {/* ── Sidebar ─────────────────────────────────────────────────────── */}
       <div className={`${isCollapsed ? 'w-20' : 'w-64'} bg-[var(--surface)] border-r border-[var(--border)] flex flex-col flex-shrink-0 transition-all duration-300 z-20`}>
         
-        {/* Logo */}
+        {/* Competition banner */}
+      {!isCollapsed && (
+        <div className="px-4 py-2 bg-gradient-to-r from-violet-900/40 to-cyan-900/30 border-b border-violet-500/20 flex items-center gap-2">
+          <Sparkles className="w-3 h-3 text-violet-400 flex-shrink-0"/>
+          <span className="text-[10px] text-violet-300 font-semibold truncate">Google Cloud AI Builder Cup</span>
+        </div>
+      )}
+
+      {/* Logo */}
         <div className="p-4 h-16 border-b border-[var(--border)] flex items-center justify-between">
           <div className="flex items-center gap-3 overflow-hidden">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-white p-1 shadow-sm">
@@ -96,6 +106,7 @@ export default function SidebarLayout({ children }) {
           </NavSection>
 
           <NavSection title="Operations" isCollapsed={isCollapsed}>
+            <NavLink to="/copilot" icon={Bot} active={location.pathname === '/copilot'} isCollapsed={isCollapsed} pulse>Manufacturing AI</NavLink>
             <NavLink to="/industrial" icon={Cpu} active={location.pathname === '/industrial'} isCollapsed={isCollapsed}>Industrial Intel</NavLink>
             <NavLink to="/hunt" icon={Search} active={location.pathname === '/hunt'} isCollapsed={isCollapsed}>Threat Hunt</NavLink>
             <NavLink to="/alerts" icon={List} active={location.pathname === '/alerts'} isCollapsed={isCollapsed} badge={alerts?.filter(a=>a.status==='NEW').length || 0}>Alerts</NavLink>
@@ -260,7 +271,7 @@ function NavSection({ title, children, isCollapsed }) {
   )
 }
 
-function NavLink({ to, icon: Icon, children, active, isCollapsed, badge }) {
+function NavLink({ to, icon: Icon, children, active, isCollapsed, badge, pulse }) {
   return (
     <Link
       to={to}
@@ -273,6 +284,12 @@ function NavLink({ to, icon: Icon, children, active, isCollapsed, badge }) {
     >
       <Icon className="w-5 h-5 flex-shrink-0" />
       {!isCollapsed && <span className="truncate flex-1">{children}</span>}
+      {!isCollapsed && pulse && (
+        <span className="flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30">
+          <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse"/>
+          AI
+        </span>
+      )}
       {!isCollapsed && badge > 0 && (
         <span className="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
           {badge}

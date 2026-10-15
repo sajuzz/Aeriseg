@@ -92,3 +92,36 @@ async def get_agent_detail(agent_id: str, current_user: dict = Depends(get_curre
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.post("/agents/{agent_id}/restart")
+async def restart_agent_endpoint(agent_id: str, current_user: dict = Depends(get_current_user)):
+    try:
+        res = agent_service.restart_agent(agent_id)
+        return {"status": "success", "data": res}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/agents/{agent_id}/update")
+async def update_agent_endpoint(agent_id: str, current_user: dict = Depends(get_current_user)):
+    try:
+        res = agent_service.update_agent(agent_id)
+        return {"status": "success", "data": res}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/agents/{agent_id}/diagnostics")
+async def diagnostics_agent_endpoint(agent_id: str, current_user: dict = Depends(get_current_user)):
+    try:
+        res = agent_service.collect_diagnostics(agent_id)
+        return {"status": "success", "data": res}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.delete("/agents/{agent_id}")
+async def delete_agent_endpoint(agent_id: str, current_user: dict = Depends(get_current_user)):
+    try:
+        deleted = agent_service.delete_agent(agent_id)
+        return {"status": "success", "deleted": deleted}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
